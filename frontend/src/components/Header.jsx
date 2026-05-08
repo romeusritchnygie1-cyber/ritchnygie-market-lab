@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { Activity, Newspaper, Calendar as CalendarIcon, Layers } from "lucide-react";
+import { Activity, Newspaper, Calendar as CalendarIcon, Layers, BookOpen, FlaskConical } from "lucide-react";
 import Logo from "@/components/Logo";
 
 const NAV = [
     { to: "/", label: "Terminal", icon: Activity },
     { to: "/watchlist", label: "Watchlist", icon: Layers },
+    { to: "/journal", label: "Journal", icon: BookOpen },
+    { to: "/lab", label: "Lab", icon: FlaskConical },
     { to: "/news", label: "Intel", icon: Newspaper },
     { to: "/calendar", label: "Calendar", icon: CalendarIcon },
 ];

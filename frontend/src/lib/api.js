@@ -17,4 +17,12 @@ export const fetchNews = (category = "all", limit = 30) =>
 export const fetchLondonSession = () => api.get("/london-session").then((r) => r.data);
 export const fetchMacro = () => api.get("/macro").then((r) => r.data);
 
+export const fetchTrades = (limit = 500) => api.get(`/journal/trades`, { params: { limit } }).then((r) => r.data);
+export const createTrade = (data) => api.post(`/journal/trades`, data).then((r) => r.data);
+export const updateTrade = (id, data) => api.patch(`/journal/trades/${id}`, data).then((r) => r.data);
+export const deleteTrade = (id) => api.delete(`/journal/trades/${id}`).then((r) => r.data);
+export const fetchBehavior = () => api.get(`/journal/behavior`).then((r) => r.data);
+export const fetchProbability = () => api.get(`/journal/probability`).then((r) => r.data);
+export const runBacktest = (params) => api.post(`/backtest`, null, { params }).then((r) => r.data);
+
 export default api;

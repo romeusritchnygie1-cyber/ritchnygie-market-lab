@@ -171,6 +171,33 @@
 .rtl-root ::-webkit-scrollbar-thumb { background: #18181b; border-radius: 2px; }
 .rtl-root ::-webkit-scrollbar-thumb:hover { background: #27272a; }
 
+/* === Form inputs === */
+.rtl-input {
+    width: 100%;
+    background: #050505;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 2px;
+    font-size: 13px;
+    font-family: "IBM Plex Sans", sans-serif;
+    transition: border-color 0.15s ease;
+}
+.rtl-input:focus {
+    outline: none;
+    border-color: rgba(59,130,246,0.6);
+}
+.rtl-input::placeholder { color: #52525b; }
+select.rtl-input {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.4) 50%),
+                      linear-gradient(135deg, rgba(255,255,255,0.4) 50%, transparent 50%);
+    background-position: calc(100% - 14px) center, calc(100% - 9px) center;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 28px;
+}
+
 /* === Selection === */
 ::selection { background: rgba(59,130,246,0.4); color: #fff; }
 

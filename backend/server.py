@@ -15,6 +15,9 @@ from services.news_service import get_combined_news, get_newsapi_headlines
 from services.london_session import session_status
 from services.fred_service import get_macro_panel, fetch_series
 from services.ohlc import get_ohlc
+from services.journal import Trade, TradeCreate, TradeUpdate, trade_to_doc, doc_to_trade
+from services.analytics import behavior_stats, probability_engine
+from services.backtest import run_backtest
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
@@ -122,6 +125,84 @@ async def ohlc(symbol: str, period: str = "3mo", interval: str = "1d"):
 @api_router.get("/symbols")
 async def symbols():
     return {"symbols": [{"key": k, "label": LABELS.get(k, k), "yahoo": v} for k, v in SYMBOL_MAP.items()]}
+
+
+# ============ JOURNAL ============
+@api_router.post("/journal/trades", response_model=Trade)
+async def create_trade(payload: TradeCreate):
+    trade = Trade(**payload.model_dump())
+    await db.trades.insert_one(trade_to_doc(trade))
+    return trade
+
+
+@api_router.get("/journal/trades")
+async def list_trades(limit: int = 500):
+    docs = await db.trades.find({}, {"_id": 0}).sort("traded_at", -1).to_list(limit)
+    return {"trades": [doc_to_trade(d) for d in docs]}
+
+
+@api_router.get("/journal/trades/{trade_id}", response_model=Trade)
+async def get_trade(trade_id: str):
+    doc = await db.trades.find_one({"id": trade_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="not found")
+    return Trade(**doc_to_trade(doc))
+
+
+@api_router.patch("/journal/trades/{trade_id}", response_model=Trade)
+async def update_trade(trade_id: str, payload: TradeUpdate):
+    update = {k: v for k, v in payload.model_dump(exclude_unset=True).items() if v is not None}
+    if "traded_at" in update and hasattr(update["traded_at"], "isoformat"):
+        update["traded_at"] = update["traded_at"].isoformat()
+    res = await db.trades.find_one_and_update(
+        {"id": trade_id}, {"$set": update}, return_document=True, projection={"_id": 0}
+    )
+    if not res:
+        raise HTTPException(status_code=404, detail="not found")
+    return Trade(**doc_to_trade(res))
+
+
+@api_router.delete("/journal/trades/{trade_id}")
+async def delete_trade(trade_id: str):
+    r = await db.trades.delete_one({"id": trade_id})
+    if r.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="not found")
+    return {"deleted": trade_id}
+
+
+# ============ ANALYTICS ============
+@api_router.get("/journal/behavior")
+async def behavior():
+    docs = await db.trades.find({}, {"_id": 0}).to_list(5000)
+    return behavior_stats([doc_to_trade(d) for d in docs])
+
+
+@api_router.get("/journal/probability")
+async def probability():
+    docs = await db.trades.find({}, {"_id": 0}).to_list(5000)
+    return probability_engine([doc_to_trade(d) for d in docs])
+
+
+# ============ BACKTEST ============
+@api_router.post("/backtest")
+async def backtest(
+    symbol: str,
+    strategy: str = "regime_breakout",
+    period: str = "2y",
+    interval: str = "1d",
+    adx_threshold: float = 25.0,
+    rsi_buy: float = 30.0,
+    rsi_sell: float = 60.0,
+):
+    return run_backtest(
+        symbol=symbol,
+        strategy=strategy,
+        period=period,
+        interval=interval,
+        adx_threshold=adx_threshold,
+        rsi_buy=rsi_buy,
+        rsi_sell=rsi_sell,
+    )
 
 
 app.include_router(api_router)

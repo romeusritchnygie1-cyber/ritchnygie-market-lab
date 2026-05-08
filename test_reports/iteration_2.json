@@ -1,0 +1,46 @@
+{
+  "summary": "Phase 2 RTL end-to-end testing complete. Backend pytest suite (13 new tests) for Journal CRUD, Behavior/Probability analytics and Backtester (regime_breakout + mean_reversion) — 13/13 PASS (100%). Frontend Playwright run on the live preview URL: /journal page loads, Log Trade modal opens, all fields fill, Save Trade creates trade and updates the table + stats; /lab page renders Behavior, Probability and Backtester sections, Run triggers backtest API and renders summary stats + lightweight-charts equity curve; new nav links Journal & Lab navigate correctly. _id field excluded from all journal responses (verified explicitly).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/backtest", "issue": "Endpoint requires symbol via query string (uses non-Pydantic primitive params). Works fine with axios `{params}` but couldn't accept a JSON body — works as-is, just worth noting if a future client tries to POST a body."},
+      {"endpoint": "GET /api/journal/trades", "issue": "Returns `{trades: [...]}` envelope; other Phase-2 GET-by-id returns the raw Trade object. Inconsistent shape across journal endpoints — frontend handles it, but a uniform `{trades: [...]}` / `{trade: {...}}` envelope would be cleaner."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Lab — Probability Engine table", "issues": ["Header columns 'setup'/'side'/'day'/'session'/'symbol' are rendered lowercase from the col keys; they pick up the .rtl-eyebrow uppercase styling so visually fine, but inconsistent with the other fully labelled columns (N / Win% / Avg R / Edge). Cosmetic only."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_phase2_journal_lab.py",
+    "/app/backend/tests/test_rtl_api.py",
+    "/app/test_reports/pytest/phase2_results.xml"
+  ],
+  "action_items": [
+    "(Optional) Standardise journal API envelope: GET /journal/trades returns {trades: [...]} but GET /journal/trades/{id}, PATCH and POST return the raw Trade object.",
+    "(Optional) Add a small `traded_at` filter / pagination to GET /journal/trades — currently capped at limit=500 with no date range."
+  ],
+  "critical_code_review_comments": [
+    "services/journal.py: Trade Pydantic model is clean, uses uuid + UTC ISO timestamps. doc_to_trade() correctly strips MongoDB _id everywhere — verified at runtime, no _id leakage in any response.",
+    "services/analytics.py: pure-Python aggregation, no DB calls, easy to test. winrate uses 'pnl > 0' fallback to r_multiple — sensible. Sorted desc by edge_score as expected.",
+    "services/backtest.py: simple but correct. Edge case — if `compute_atr(df).iloc[i]` is 0 the divide is guarded with `or 1`, but if equity becomes negative (catastrophic loss) the % return calc would still divide by initial fine. Equity curve emitted on every bar, ~250 points for 1y — efficient.",
+    "server.py POST /api/backtest uses primitive query params (FastAPI implicit Query). Works, but a Pydantic BacktestRequest body would be more idiomatic and document better in /docs.",
+    "server.py PATCH update_trade: uses `find_one_and_update(..., return_document=True)` — in motor `return_document=True` does NOT mean ReturnDocument.AFTER. It happens to work because PyMongo treats truthy as AFTER, but explicit `from pymongo import ReturnDocument; return_document=ReturnDocument.AFTER` would be safer and self-documenting.",
+    "Frontend pages/Lab.jsx: useRef imported separately on a second line — works but unidiomatic; consolidate into the React import.",
+    "Frontend TradeForm.jsx: form state reset only resets some fields after save (keeps symbol/side/session/setup), which is good UX. Strips empty-string fields before POST — good.",
+    "Frontend api.js: timeout 60s is appropriate for backtest calls. All endpoints use REACT_APP_BACKEND_URL — no hardcoded hosts."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_phase2_journal_lab.py (new — 13 tests covering Journal CRUD, analytics, backtester)"
+  ],
+  "success_rate": {"backend": "100% (13/13 Phase 2 + 15/15 Phase 1 still green)", "frontend": "100% (all observable flows worked)"},
+  "test_credentials": "N/A (no auth in app)",
+  "seed_data_creation": "Tests create 4 TEST_-tagged trades during the run and delete them in TestDeleteCleanup. UI test trade `UI_TEST phase2 entry` is also created and then deleted via the trash icon at the end of the Playwright run.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 1 + Phase 2 are fully green. Phase 1 regression: `python -m pytest backend/tests/test_rtl_api.py -v`. Phase 2 regression: `python -m pytest backend/tests/test_phase2_journal_lab.py -v`. Frontend new pages live at /journal (data-testid=journal-page, open-trade-form, trade-form-modal, save-trade, trade-row-{id}, delete-{id}) and /lab (data-testid=lab-page, behavior-section, probability-section, backtest-section, run-backtest, equity-curve). yfinance has 30-120s in-process cache so backtests after the first call are <1s. The UI Log Trade modal uses native select dropdowns (not shadcn) — tests must use page.select_option(), not click.",
+  "rca of the issue": "N/A — no functional bugs found in Phase 2."
+}
