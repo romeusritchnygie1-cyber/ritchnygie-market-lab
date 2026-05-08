@@ -12,9 +12,12 @@ favors London session and also trades Silver. Wants institutional/macro intellig
 
 ## Brand & Design
 - Name: **Ritchnygie Trading Lab** (short: **RTL**).
-- Style: Bloomberg-meets-modern fintech, dark institutional terminal.
+- Style: Bloomberg-meets-modern fintech, themable institutional terminal.
+- 3 themes (toggle in header): **Navy** (default `#0a1628`) / **Dark** (pure black) / **Light** (white). All driven by CSS variables.
 - Fonts: Cabinet Grotesk (headings) · IBM Plex Sans (body) · JetBrains Mono (data).
-- Color rules: blue uptick `#3B82F6`, red downtick `#EF4444` — no retail green-on-black.
+- Color accents: blue (uptick / primary), red (downtick / risk-off), amber-orange (Gold + warnings).
+- Dual-market hero: **S&P 500 CFD** (FundedNext, blue accent) + **Gold** (OANDA XAUUSD, amber accent).
+- Dual TradingView charts below hero (SPX + Gold side-by-side) with shared timeframe.
 
 ## Architecture
 - **Frontend**: React 19 + Tailwind + shadcn/ui · pages: Dashboard / Watchlist / News (Intel) / Calendar.

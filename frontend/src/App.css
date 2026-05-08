@@ -1,19 +1,39 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap");
 @import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,400,700,600&display=swap");
 
-/* ================================
-   RTL Pro Trading Terminal — pure black, dense, institutional
-   ================================ */
+/* ===========================================================
+   RTL — themable institutional terminal.
+   Theme variables are set in /lib/theme.js (Navy / Dark / Light)
+   =========================================================== */
+
+:root {
+    /* Default = Navy (overridden by theme.js on mount) */
+    --rtl-bg-base: #0a1628;
+    --rtl-bg-panel: #0d1c33;
+    --rtl-bg-card: #10223d;
+    --rtl-bg-hover: #152a48;
+    --rtl-border-soft: rgba(148, 184, 232, 0.12);
+    --rtl-border-focus: rgba(148, 184, 232, 0.35);
+    --rtl-text-primary: #f4f7fb;
+    --rtl-text-secondary: #a8bdd9;
+    --rtl-text-muted: #6b7d99;
+    --rtl-up: #3b82f6;
+    --rtl-down: #ef4444;
+    --rtl-warn: #f59e0b;
+    --rtl-accent: #fbbf24;
+    --rtl-grid: rgba(148, 184, 232, 0.06);
+}
+
 .rtl-root {
-    background-color: #000000;
-    color: #f4f4f5;
+    background-color: var(--rtl-bg-base);
+    color: var(--rtl-text-primary);
     min-height: 100vh;
     font-family: "IBM Plex Sans", sans-serif;
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "ss01", "tnum";
 }
 
-/* Tabular nums for ALL numeric data */
+/* Tabular nums for numeric data */
 .font-mono {
     font-family: "JetBrains Mono", monospace;
     font-variant-numeric: tabular-nums;
@@ -21,46 +41,32 @@
 .font-headings { font-family: "Cabinet Grotesk", sans-serif; letter-spacing: -0.01em; }
 .font-body     { font-family: "IBM Plex Sans", sans-serif; }
 
-/* === Surfaces ===
-   We layer 3 levels of black for depth without using lighter grays. */
-.rtl-bg-base    { background-color: #000000; }
-.rtl-bg-panel   { background-color: #060606; }
-.rtl-bg-card    { background-color: #0a0a0a; }
-.rtl-bg-hover   { background-color: #0f0f0f; }
+/* === Surfaces === */
+.rtl-bg-base    { background-color: var(--rtl-bg-base); }
+.rtl-bg-panel   { background-color: var(--rtl-bg-panel); }
+.rtl-bg-card    { background-color: var(--rtl-bg-card); }
+.rtl-bg-hover   { background-color: var(--rtl-bg-hover); }
 
-/* Standard professional card — sharp 2px corners, single hairline border */
-.rtl-card-pro {
-    background: #0a0a0a;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 2px;
+.rtl-card, .rtl-card-pro {
+    background: var(--rtl-bg-card);
+    border: 1px solid var(--rtl-border-soft);
+    border-radius: 4px;
     transition: border-color 0.18s ease;
 }
-.rtl-card-pro:hover { border-color: rgba(255, 255, 255, 0.18); }
+.rtl-card:hover, .rtl-card-pro:hover { border-color: var(--rtl-border-focus); }
 
-/* Legacy alias (still used by older components until migrated) */
-.rtl-card {
-    background: #0a0a0a;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 2px;
-    transition: border-color 0.18s ease;
-}
-.rtl-card:hover { border-color: rgba(255, 255, 255, 0.18); }
-
-/* === Eyebrow / labels === */
+/* Eyebrow */
 .rtl-eyebrow {
     font-family: "Cabinet Grotesk", sans-serif;
     font-size: 9px;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: #71717a;
+    color: var(--rtl-text-muted);
     font-weight: 600;
 }
-.rtl-eyebrow-strong {
-    color: #d4d4d8;
-    font-weight: 700;
-}
+.rtl-eyebrow-strong { color: var(--rtl-text-secondary); font-weight: 700; }
 
-/* === Hero ticker === */
+/* Hero ticker */
 .rtl-hero-price {
     font-family: "JetBrains Mono", monospace;
     font-weight: 500;
@@ -70,24 +76,27 @@
 }
 
 /* === Color tokens === */
-.txt-up   { color: #3b82f6; }
-.txt-down { color: #ef4444; }
-.txt-warn { color: #f59e0b; }
-.txt-mute { color: #52525b; }
-.txt-sec  { color: #a1a1aa; }
-.txt-hi   { color: #ffffff; }
+.txt-up   { color: var(--rtl-up); }
+.txt-down { color: var(--rtl-down); }
+.txt-warn { color: var(--rtl-warn); }
+.txt-mute { color: var(--rtl-text-muted); }
+.txt-sec  { color: var(--rtl-text-secondary); }
+.txt-hi   { color: var(--rtl-text-primary); }
+.txt-accent { color: var(--rtl-accent); }
 
-.bg-up   { background-color: rgba(59, 130, 246, 0.10); }
-.bg-down { background-color: rgba(239, 68, 68, 0.10); }
+.bg-up    { background-color: rgba(59, 130, 246, 0.10); }
+.bg-down  { background-color: rgba(239, 68, 68, 0.10); }
+.bg-warn  { background-color: rgba(245, 158, 11, 0.10); }
+.bg-accent { background-color: rgba(251, 191, 36, 0.10); }
 
-/* === Hero chamber === */
+/* === Hero chamber (SPX) === */
 .rtl-hero {
     background:
-        radial-gradient(1200px 400px at 90% -10%, rgba(59,130,246,0.10), transparent 60%),
-        radial-gradient(800px 300px at 0% 100%, rgba(255,255,255,0.025), transparent 60%),
-        #060606;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 2px;
+        radial-gradient(1200px 400px at 90% -10%, rgba(59,130,246,0.18), transparent 60%),
+        radial-gradient(800px 300px at 0% 100%, rgba(255,255,255,0.04), transparent 60%),
+        var(--rtl-bg-panel);
+    border: 1px solid var(--rtl-border-soft);
+    border-radius: 4px;
     position: relative;
     overflow: hidden;
 }
@@ -95,8 +104,30 @@
     content: "";
     position: absolute; inset: 0;
     background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        linear-gradient(var(--rtl-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--rtl-grid) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none;
+    mask-image: radial-gradient(circle at center, #000 30%, transparent 80%);
+}
+
+/* === Hero — Gold variant (warm orange/amber gradient) === */
+.rtl-hero-gold {
+    background:
+        radial-gradient(1200px 400px at 90% -10%, rgba(251,191,36,0.20), transparent 60%),
+        radial-gradient(800px 300px at 0% 100%, rgba(245,158,11,0.08), transparent 60%),
+        var(--rtl-bg-panel);
+    border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+.rtl-hero-gold::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(var(--rtl-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--rtl-grid) 1px, transparent 1px);
     background-size: 56px 56px;
     pointer-events: none;
     mask-image: radial-gradient(circle at center, #000 30%, transparent 80%);
@@ -122,37 +153,41 @@
 }
 .live-dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background-color: #3b82f6;
+    background-color: var(--rtl-up);
     box-shadow: 0 0 8px rgba(59,130,246,0.6);
     animation: livePulse 1.6s ease-in-out infinite;
+}
+.live-dot-gold {
+    background-color: var(--rtl-accent);
+    box-shadow: 0 0 8px rgba(251,191,36,0.6);
 }
 
 /* === Heat tile === */
 .heat-tile {
-    background: #0a0a0a;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 2px;
+    background: var(--rtl-bg-card);
+    border: 1px solid var(--rtl-border-soft);
+    border-radius: 3px;
     padding: 14px;
     transition: transform 0.16s ease, border-color 0.16s ease;
 }
-.heat-tile:hover { transform: translateY(-1px); border-color: rgba(255, 255, 255, 0.22); }
+.heat-tile:hover { transform: translateY(-1px); border-color: var(--rtl-border-focus); }
 
 /* === Regime badge === */
 .regime-badge {
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    background: #050505;
+    border: 1px solid var(--rtl-border-soft);
+    background: var(--rtl-bg-base);
     padding: 5px 10px;
-    border-radius: 2px;
+    border-radius: 3px;
     font-family: "Cabinet Grotesk", sans-serif;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-size: 10px;
     font-weight: 700;
 }
-.regime-risk-on  { border-color: rgba(59, 130, 246, 0.5); color: #3b82f6; background: rgba(59,130,246,0.06); }
-.regime-risk-off { border-color: rgba(239, 68, 68, 0.5);  color: #ef4444; background: rgba(239,68,68,0.06); }
-.regime-trending { border-color: rgba(255, 255, 255, 0.4); color: #ffffff; }
-.regime-warn     { border-color: rgba(245, 158, 11, 0.5); color: #f59e0b; background: rgba(245,158,11,0.06); }
+.regime-risk-on  { border-color: rgba(59, 130, 246, 0.5); color: var(--rtl-up);   background: rgba(59,130,246,0.10); }
+.regime-risk-off { border-color: rgba(239, 68, 68, 0.5);  color: var(--rtl-down); background: rgba(239,68,68,0.10); }
+.regime-trending { border-color: rgba(255, 255, 255, 0.4); color: var(--rtl-text-primary); }
+.regime-warn     { border-color: rgba(245, 158, 11, 0.5); color: var(--rtl-warn); background: rgba(245,158,11,0.10); }
 
 /* === Pro section header bars === */
 .rtl-section-head {
@@ -160,46 +195,64 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 14px;
-    background: #060606;
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--rtl-bg-panel);
+    border: 1px solid var(--rtl-border-soft);
     border-bottom: none;
 }
-
-/* === Scrollbar === */
-.rtl-root ::-webkit-scrollbar { width: 8px; height: 8px; }
-.rtl-root ::-webkit-scrollbar-track { background: #000; }
-.rtl-root ::-webkit-scrollbar-thumb { background: #18181b; border-radius: 2px; }
-.rtl-root ::-webkit-scrollbar-thumb:hover { background: #27272a; }
 
 /* === Form inputs === */
 .rtl-input {
     width: 100%;
-    background: #050505;
-    border: 1px solid rgba(255,255,255,0.08);
-    color: #ffffff;
+    background: var(--rtl-bg-base);
+    border: 1px solid var(--rtl-border-soft);
+    color: var(--rtl-text-primary);
     padding: 8px 12px;
-    border-radius: 2px;
+    border-radius: 3px;
     font-size: 13px;
     font-family: "IBM Plex Sans", sans-serif;
     transition: border-color 0.15s ease;
 }
 .rtl-input:focus {
     outline: none;
-    border-color: rgba(59,130,246,0.6);
+    border-color: var(--rtl-up);
 }
-.rtl-input::placeholder { color: #52525b; }
+.rtl-input::placeholder { color: var(--rtl-text-muted); }
 select.rtl-input {
     appearance: none;
-    background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.4) 50%),
-                      linear-gradient(135deg, rgba(255,255,255,0.4) 50%, transparent 50%);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--rtl-text-secondary) 50%),
+        linear-gradient(135deg, var(--rtl-text-secondary) 50%, transparent 50%);
     background-position: calc(100% - 14px) center, calc(100% - 9px) center;
     background-size: 5px 5px;
     background-repeat: no-repeat;
     padding-right: 28px;
 }
 
+/* === Border helpers === */
+.border-rtl-soft { border-color: var(--rtl-border-soft) !important; }
+.bg-rtl-up\/15 { background-color: rgba(59,130,246,0.15); }
+.text-rtl-up { color: var(--rtl-up); }
+
 /* === Selection === */
 ::selection { background: rgba(59,130,246,0.4); color: #fff; }
 
-/* === Misc utility === */
-.divider-y > * + * { border-top: 1px solid rgba(255,255,255,0.05); }
+/* === Scrollbar === */
+.rtl-root ::-webkit-scrollbar { width: 8px; height: 8px; }
+.rtl-root ::-webkit-scrollbar-track { background: var(--rtl-bg-base); }
+.rtl-root ::-webkit-scrollbar-thumb { background: var(--rtl-bg-hover); border-radius: 3px; }
+.rtl-root ::-webkit-scrollbar-thumb:hover { background: var(--rtl-border-focus); }
+
+.divider-y > * + * { border-top: 1px solid var(--rtl-border-soft); }
+
+/* Light theme: invert the live-dot pulse and adjust selection */
+[data-rtl-theme="light"] ::selection { background: rgba(29,78,216,0.25); color: #0f172a; }
+[data-rtl-theme="light"] .rtl-hero {
+    background:
+        radial-gradient(1200px 400px at 90% -10%, rgba(29,78,216,0.10), transparent 60%),
+        var(--rtl-bg-panel);
+}
+[data-rtl-theme="light"] .rtl-hero-gold {
+    background:
+        radial-gradient(1200px 400px at 90% -10%, rgba(217,119,6,0.14), transparent 60%),
+        var(--rtl-bg-panel);
+}

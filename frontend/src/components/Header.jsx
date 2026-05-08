@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Activity, Newspaper, Calendar as CalendarIcon, Layers, BookOpen, FlaskConical } from "lucide-react";
 import Logo from "@/components/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const NAV = [
     { to: "/", label: "Terminal", icon: Activity },
@@ -15,7 +16,8 @@ export default function Header() {
     const { pathname } = useLocation();
     return (
         <header
-            className="sticky top-0 z-50 border-b border-white/[0.06] backdrop-blur-xl bg-black/80"
+            className="sticky top-0 z-50 border-b border-rtl-soft backdrop-blur-xl"
+            style={{ backgroundColor: "color-mix(in srgb, var(--rtl-bg-base) 85%, transparent)" }}
             data-testid="rtl-header"
         >
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8">
@@ -33,11 +35,9 @@ export default function Header() {
                                     to={to}
                                     data-testid={`nav-${label.toLowerCase()}`}
                                     className={`flex items-center gap-2 px-3 py-2 text-[10px] font-headings tracking-[0.22em] uppercase transition-colors ${
-                                        active
-                                            ? "text-white"
-                                            : "txt-mute hover:text-white"
+                                        active ? "text-rtl-up" : "txt-mute hover:text-white"
                                     }`}
-                                    style={active ? { borderBottom: "1px solid #3b82f6" } : {}}
+                                    style={active ? { borderBottom: "1px solid var(--rtl-up)" } : {}}
                                 >
                                     <Icon size={12} />
                                     <span className="hidden md:inline">{label}</span>
@@ -46,11 +46,14 @@ export default function Header() {
                         })}
                     </nav>
 
-                    <div className="hidden md:flex items-center gap-2">
-                        <div className="live-dot" />
-                        <span className="text-[9px] tracking-[0.28em] uppercase txt-sec font-headings">
-                            Live · 24/7
-                        </span>
+                    <div className="flex items-center gap-3">
+                        <ThemeToggle />
+                        <div className="hidden md:flex items-center gap-2">
+                            <div className="live-dot" />
+                            <span className="text-[9px] tracking-[0.28em] uppercase txt-sec font-headings">
+                                Live · 24/7
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

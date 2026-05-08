@@ -18,7 +18,7 @@ export default function TickerStrip() {
 
     if (!tickers.length) {
         return (
-            <div className="border-y border-white/[0.08] bg-[#0a0a0a] py-3 text-center txt-mute text-xs font-mono">
+            <div className="border-y border-rtl-soft rtl-bg-panel py-3 text-center txt-mute text-xs font-mono">
                 Loading market tape...
             </div>
         );
@@ -28,7 +28,7 @@ export default function TickerStrip() {
 
     return (
         <div
-            className="border-y border-white/[0.08] bg-[#0a0a0a] py-3 overflow-hidden"
+            className="border-y border-rtl-soft rtl-bg-panel py-3 overflow-hidden"
             data-testid="ticker-strip"
         >
             <div className="marquee">
@@ -37,7 +37,7 @@ export default function TickerStrip() {
                     return (
                         <div
                             key={`${t.symbol}-${i}`}
-                            className="flex items-center gap-3 px-4 border-r border-white/[0.06]"
+                            className="flex items-center gap-3 px-4 border-r border-rtl-soft"
                         >
                             <span className="font-headings tracking-[0.18em] uppercase text-xs text-white">
                                 {t.label}

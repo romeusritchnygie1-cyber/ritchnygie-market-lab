@@ -16,6 +16,13 @@ export default function TradingViewWidget({
 
     useEffect(() => {
         if (!containerRef.current) return;
+        // Detect theme from CSS var to keep TV widget in sync
+        const themeName = document.documentElement.getAttribute("data-rtl-theme") || "navy";
+        const tvTheme = themeName === "light" ? "light" : "dark";
+        const bgColor =
+            getComputedStyle(document.documentElement).getPropertyValue("--rtl-bg-card").trim() ||
+            "#0a0a0a";
+
         // Clear any previous widget
         containerRef.current.innerHTML = `<div id="tv-${instanceKey}" style="height:100%;width:100%;"></div>`;
 
@@ -30,15 +37,15 @@ export default function TradingViewWidget({
                     interval,
                     autosize: true,
                     timezone: "Etc/UTC",
-                    theme: "dark",
-                    style: "1", // candles
+                    theme: tvTheme,
+                    style: "1",
                     locale: "en",
-                    toolbar_bg: "#000000",
+                    toolbar_bg: bgColor,
                     enable_publishing: false,
                     hide_legend: false,
                     save_image: false,
-                    backgroundColor: "#000000",
-                    gridColor: "rgba(255,255,255,0.04)",
+                    backgroundColor: bgColor,
+                    gridColor: "rgba(148,184,232,0.06)",
                     studies,
                     withdateranges: true,
                     allow_symbol_change: false,

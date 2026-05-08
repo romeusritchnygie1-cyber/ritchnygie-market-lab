@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import TickerStrip from "@/components/TickerStrip";
-import HeroSPX from "@/components/HeroSPX";
+import HeroDual from "@/components/HeroDual";
 import Mag7Heatmap from "@/components/Mag7Heatmap";
 import RegimeCard from "@/components/RegimeCard";
 import EconomicCalendar from "@/components/EconomicCalendar";
@@ -14,8 +14,8 @@ import TradingViewWidget from "@/components/TradingViewWidget";
 // TradingView symbols — using CFD/spot tickers that match what the user actually trades
 const CHART_SYMBOLS = [
     { sym: "FOREXCOM:SPXUSD",  label: "S&P 500 CFD",  short: "SPX" },
-    { sym: "OANDA:XAGUSD",     label: "Silver",        short: "SILVER" },
     { sym: "OANDA:XAUUSD",     label: "Gold",          short: "GOLD" },
+    { sym: "OANDA:XAGUSD",     label: "Silver",        short: "SILVER" },
     { sym: "TVC:DXY",          label: "DXY",           short: "DXY" },
     { sym: "TVC:VIX",          label: "VIX",           short: "VIX" },
     { sym: "TVC:US10Y",        label: "10Y Yield",     short: "TNX" },
@@ -49,38 +49,75 @@ export default function Dashboard() {
             <TickerStrip />
 
             <main className="w-full max-w-[1920px] mx-auto px-4 md:px-8 py-6">
-                {/* Hero + Regime */}
+                {/* Dual Hero — SPX + Gold */}
+                <section className="mb-3"><HeroDual /></section>
+
+                {/* Regime + London session quick row */}
                 <section className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3">
-                    <div className="lg:col-span-8"><HeroSPX /></div>
-                    <div className="lg:col-span-4"><RegimeCard /></div>
+                    <div className="lg:col-span-8"><RegimeCard /></div>
+                    <div className="lg:col-span-4"><LondonSession /></div>
                 </section>
 
-                {/* TradingView Chart */}
-                <section className="mb-3 rtl-card-pro" data-testid="chart-section">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06] flex-wrap gap-3">
-                        <div className="flex items-center gap-3">
-                            <div className="rtl-eyebrow rtl-eyebrow-strong">Pro Chart</div>
-                            <div className="font-mono text-[11px] txt-mute">
-                                {chartSym.short} · {chartSym.label} · {tf.label}
+                {/* Dual TradingView Charts: SPX + Gold side by side */}
+                <section className="grid grid-cols-1 xl:grid-cols-2 gap-3 mb-3" data-testid="dual-chart-section">
+                    <div className="rtl-card-pro" data-testid="chart-spx">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-rtl-soft">
+                            <div className="flex items-center gap-3">
+                                <div className="rtl-eyebrow rtl-eyebrow-strong">Primary · S&P 500 CFD</div>
+                                <span className="text-[10px] tracking-[0.18em] uppercase font-headings txt-up">{tf.label}</span>
                             </div>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-1">
-                            <div className="flex gap-1 mr-3 pr-3 border-r border-white/[0.08]">
+                            <div className="flex gap-1">
                                 {TIMEFRAMES.map((t) => (
                                     <button
                                         key={t.v}
                                         onClick={() => setTf(t)}
                                         data-testid={`tf-${t.label}`}
-                                        className={`text-[10px] tracking-[0.18em] uppercase font-headings px-2 py-1 transition-colors ${
-                                            tf.v === t.v
-                                                ? "text-white bg-white/[0.08] border border-white/30"
-                                                : "txt-mute hover:text-white border border-transparent"
+                                        className={`text-[9px] tracking-[0.22em] uppercase font-headings px-1.5 py-0.5 transition-colors ${
+                                            tf.v === t.v ? "text-white bg-rtl-up/15 border border-rtl-up/40" : "txt-mute hover:text-white border border-transparent"
                                         }`}
                                     >
                                         {t.label}
                                     </button>
                                 ))}
                             </div>
+                        </div>
+                        <TradingViewWidget
+                            symbol="FOREXCOM:SPXUSD"
+                            interval={tf.v}
+                            height={460}
+                            instanceKey={`spx-main-${tf.v}`}
+                        />
+                    </div>
+
+                    <div className="rtl-card-pro" data-testid="chart-gold">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-rtl-soft">
+                            <div className="flex items-center gap-3">
+                                <div className="rtl-eyebrow rtl-eyebrow-strong" style={{ color: "var(--rtl-accent)" }}>Commodity · Gold</div>
+                                <span className="text-[10px] tracking-[0.18em] uppercase font-headings txt-accent">{tf.label}</span>
+                            </div>
+                            <div className="text-[9px] tracking-[0.22em] uppercase font-headings txt-mute">
+                                XAUUSD · OANDA
+                            </div>
+                        </div>
+                        <TradingViewWidget
+                            symbol="OANDA:XAUUSD"
+                            interval={tf.v}
+                            height={460}
+                            instanceKey={`gold-main-${tf.v}`}
+                        />
+                    </div>
+                </section>
+
+                {/* Extra symbol chart (user choice) */}
+                <section className="mb-3 rtl-card-pro" data-testid="chart-section">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-rtl-soft flex-wrap gap-3">
+                        <div className="flex items-center gap-3">
+                            <div className="rtl-eyebrow rtl-eyebrow-strong">Macro Watchlist Chart</div>
+                            <div className="font-mono text-[11px] txt-mute">
+                                {chartSym.short} · {chartSym.label}
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-1">
                             {CHART_SYMBOLS.map((s) => (
                                 <button
                                     key={s.sym}
@@ -88,7 +125,7 @@ export default function Dashboard() {
                                     data-testid={`chart-sym-${s.short}`}
                                     className={`text-[10px] tracking-[0.22em] uppercase font-headings px-2 py-1 transition-colors ${
                                         chartSym.sym === s.sym
-                                            ? "text-white bg-blue-500/20 border border-blue-500/50"
+                                            ? "text-white bg-rtl-up/15 border border-rtl-up/40"
                                             : "txt-mute hover:text-white border border-transparent"
                                     }`}
                                 >
@@ -100,16 +137,13 @@ export default function Dashboard() {
                     <TradingViewWidget
                         symbol={chartSym.sym}
                         interval={tf.v}
-                        height={580}
-                        instanceKey={`main-${chartSym.short}-${tf.v}`}
+                        height={500}
+                        instanceKey={`macro-${chartSym.short}-${tf.v}`}
                     />
                 </section>
 
-                {/* Mag7 + London */}
-                <section className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3">
-                    <div className="lg:col-span-8"><Mag7Heatmap /></div>
-                    <div className="lg:col-span-4"><LondonSession /></div>
-                </section>
+                {/* Mag7 */}
+                <section className="mb-3"><Mag7Heatmap /></section>
 
                 {/* Macro panel */}
                 <section className="mb-3"><MacroPanel /></section>
@@ -123,13 +157,13 @@ export default function Dashboard() {
                 {/* News */}
                 <section className="mb-3"><NewsFeed limit={15} /></section>
 
-                <footer className="mt-10 pt-6 border-t border-white/[0.05]">
+                <footer className="mt-10 pt-6 border-t border-rtl-soft">
                     <div className="flex items-center justify-between flex-wrap gap-3">
                         <div className="text-[9px] tracking-[0.28em] uppercase txt-mute font-headings">
                             Ritchnygie Trading Lab · Macro Intelligence Terminal
                         </div>
                         <div className="text-[9px] tracking-[0.22em] uppercase txt-mute font-headings">
-                            24/7 LIVE · Phase 2 · Journal · Backtest · Probability
+                            24/7 LIVE · SPX CFD · Gold · London Session
                         </div>
                     </div>
                 </footer>
