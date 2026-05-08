@@ -21,9 +21,9 @@ export default function Header() {
             data-testid="rtl-header"
         >
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8">
-                <div className="flex items-center justify-between h-14">
+                <div className="flex items-center justify-between h-16">
                     <Link to="/" data-testid="rtl-logo" className="group">
-                        <Logo size={28} />
+                        <Logo size={32} />
                     </Link>
 
                     <nav className="flex items-center gap-1">
@@ -34,12 +34,12 @@ export default function Header() {
                                     key={to}
                                     to={to}
                                     data-testid={`nav-${label.toLowerCase()}`}
-                                    className={`flex items-center gap-2 px-3 py-2 text-[10px] font-headings tracking-[0.22em] uppercase transition-colors ${
+                                    className={`flex items-center gap-2 px-3 py-2 text-xs font-headings tracking-[0.20em] uppercase transition-colors ${
                                         active ? "text-rtl-up" : "txt-mute hover:text-white"
                                     }`}
                                     style={active ? { borderBottom: "1px solid var(--rtl-up)" } : {}}
                                 >
-                                    <Icon size={12} />
+                                    <Icon size={14} />
                                     <span className="hidden md:inline">{label}</span>
                                 </Link>
                             );
@@ -50,7 +50,7 @@ export default function Header() {
                         <ThemeToggle />
                         <div className="hidden md:flex items-center gap-2">
                             <div className="live-dot" />
-                            <span className="text-[9px] tracking-[0.28em] uppercase txt-sec font-headings">
+                            <span className="text-xs tracking-[0.24em] uppercase txt-sec font-headings">
                                 Live · 24/7
                             </span>
                         </div>

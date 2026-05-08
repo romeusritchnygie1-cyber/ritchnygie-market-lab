@@ -18,13 +18,13 @@ export default function TickerStrip() {
 
     if (!tickers.length) {
         return (
-            <div className="border-y border-rtl-soft rtl-bg-panel py-3 text-center txt-mute text-xs font-mono">
+            <div className="border-y border-rtl-soft rtl-bg-panel py-3 text-center txt-mute text-sm font-mono">
                 Loading market tape...
             </div>
         );
     }
 
-    const items = [...tickers, ...tickers]; // duplicate for seamless marquee
+    const items = [...tickers, ...tickers];
 
     return (
         <div
@@ -37,15 +37,15 @@ export default function TickerStrip() {
                     return (
                         <div
                             key={`${t.symbol}-${i}`}
-                            className="flex items-center gap-3 px-4 border-r border-rtl-soft"
+                            className="flex items-center gap-3 px-5 border-r border-rtl-soft"
                         >
-                            <span className="font-headings tracking-[0.18em] uppercase text-xs text-white">
+                            <span className="font-headings tracking-[0.20em] uppercase text-sm text-white">
                                 {t.label}
                             </span>
-                            <span className="font-mono text-sm text-white">
+                            <span className="font-mono text-base text-white">
                                 {t.price !== null && t.price !== undefined ? t.price.toLocaleString() : "—"}
                             </span>
-                            <span className={`font-mono text-xs ${up ? "txt-up" : "txt-down"}`}>
+                            <span className={`font-mono text-sm ${up ? "txt-up" : "txt-down"}`}>
                                 {up ? "▲" : "▼"} {Math.abs(t.change_pct ?? 0).toFixed(2)}%
                             </span>
                         </div>
