@@ -1,34 +1,144 @@
-.App-logo {
-    height: 40vmin;
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,400,700,600&display=swap");
+
+.rtl-root {
+    background-color: #050505;
+    background-image:
+        radial-gradient(circle at 12% 18%, rgba(59, 130, 246, 0.06) 0%, transparent 35%),
+        radial-gradient(circle at 88% 8%, rgba(255, 255, 255, 0.04) 0%, transparent 40%),
+        linear-gradient(180deg, #050505 0%, #050505 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    font-family: "IBM Plex Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Base typography */
+.font-headings { font-family: "Cabinet Grotesk", sans-serif; letter-spacing: -0.01em; }
+.font-mono     { font-family: "JetBrains Mono", monospace; }
+.font-body     { font-family: "IBM Plex Sans", sans-serif; }
+
+/* Card surfaces */
+.rtl-card {
+    background: #161616;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.rtl-card:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* Card eyebrow / label */
+.rtl-eyebrow {
+    font-family: "Cabinet Grotesk", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #a1a1aa;
+    font-weight: 600;
+}
+
+/* Hero ticker */
+.rtl-hero-price {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 0.92;
+}
+
+/* Color utilities */
+.txt-up   { color: #3b82f6; }
+.txt-down { color: #ef4444; }
+.txt-warn { color: #f59e0b; }
+.txt-mute { color: #71717a; }
+.txt-sec  { color: #a1a1aa; }
+
+.bg-up   { background-color: rgba(59, 130, 246, 0.12); }
+.bg-down { background-color: rgba(239, 68, 68, 0.12); }
+
+/* Hero Section subtle texture overlay */
+.rtl-hero {
+    background: linear-gradient(135deg, #0a0a0a 0%, #111111 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+.rtl-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(800px 200px at 90% 10%, rgba(59, 130, 246, 0.08), transparent 60%),
+        radial-gradient(400px 200px at 0% 100%, rgba(255, 255, 255, 0.03), transparent 60%);
     pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
+/* Marquee */
+.marquee {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+    gap: 2.5rem;
+    animation: marquee 60s linear infinite;
+    white-space: nowrap;
+    width: max-content;
+}
+@keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
-.App-link {
-    color: #61dafb;
+/* Pulse for live dot */
+@keyframes livePulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%     { opacity: 0.45; transform: scale(0.9); }
+}
+.live-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background-color: #3b82f6;
+    animation: livePulse 1.6s ease-in-out infinite;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+/* Heat tile */
+.heat-tile {
+    background: #161616;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 16px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
+.heat-tile:hover { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.25); }
+
+/* Regime badge */
+.regime-badge {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #0c0c0c;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: "Cabinet Grotesk", sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+}
+.regime-risk-on  { border-color: rgba(59, 130, 246, 0.5); color: #3b82f6; }
+.regime-risk-off { border-color: rgba(239, 68, 68, 0.5);  color: #ef4444; }
+.regime-trending { border-color: rgba(255, 255, 255, 0.4); color: #ffffff; }
+.regime-warn     { border-color: rgba(245, 158, 11, 0.5); color: #f59e0b; }
+
+/* Number flash on update */
+@keyframes flashUp {
+    0% { background-color: rgba(59, 130, 246, 0.0); }
+    20% { background-color: rgba(59, 130, 246, 0.16); }
+    100% { background-color: rgba(59, 130, 246, 0.0); }
+}
+@keyframes flashDown {
+    0% { background-color: rgba(239, 68, 68, 0.0); }
+    20% { background-color: rgba(239, 68, 68, 0.16); }
+    100% { background-color: rgba(239, 68, 68, 0.0); }
+}
+
+/* Scrollbar */
+.rtl-root ::-webkit-scrollbar { width: 8px; height: 8px; }
+.rtl-root ::-webkit-scrollbar-track { background: #050505; }
+.rtl-root ::-webkit-scrollbar-thumb { background: #1f1f1f; border-radius: 4px; }
+.rtl-root ::-webkit-scrollbar-thumb:hover { background: #2f2f2f; }
