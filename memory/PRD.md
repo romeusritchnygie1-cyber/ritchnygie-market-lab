@@ -28,8 +28,9 @@ favors London session and also trades Silver. Wants institutional/macro intellig
 ## Phase 1 — Implemented (Feb 2026)
 - [x] Hero S&P 500 CFD live ticker (FundedNext-branded).
 - [x] Live ticker tape (SPX/SPY/DJI/VIX/DXY/10Y/Gold/Silver).
+- [x] **Pro TradingView chart** with 15+ macro symbols (SPX CFD via FOREXCOM:SPXUSD, Silver via OANDA:XAGUSD, Gold via OANDA:XAUUSD, Mag7, banks). Timeframes 5m/15m/1H/4H/D/W. Built-in ATR/ADX/RSI studies.
 - [x] Mag7 Heatmap (color-intensity by % change).
-- [x] Watchlist (AMD, ASML, TSM, GS, MS, BAC).
+- [x] Watchlist (AMD, ASML, TSM, GS, MS, BAC) + dedicated chart on /watchlist page.
 - [x] **Market Regime Engine** (Trending / Choppy / High Vol / Low Vol / Risk-On / Risk-Off / Low Liquidity / Mixed) with ADX, VIX, Risk-Composite signals.
 - [x] **Economic Calendar Risk Filter** (CPI / PPI / NFP / FOMC / Retail Sales) with humanized countdown + warning banner when high-impact event < 24h.
 - [x] Federal Reserve · Macro panel (FRED).
@@ -37,6 +38,7 @@ favors London session and also trades Silver. Wants institutional/macro intellig
 - [x] London Session tracker with NY-overlap visualization.
 - [x] News & Institutional Intelligence (Goldman / Morgan Stanley / BofA / Mag7 / macro) with filters.
 - [x] Multi-page nav: Terminal / Watchlist / Intel / Calendar.
+- [x] Custom RTL SVG logo (geometric tick-pattern monogram).
 
 ## Phase 2 — Backlog (P0 next)
 - [ ] **Trade Journal** — log entries with screenshots, tags, P&L, session.
@@ -55,6 +57,11 @@ favors London session and also trades Silver. Wants institutional/macro intellig
 - [ ] Charting integration (TradingView lightweight charts).
 - [ ] Push alerts when regime flips or high-impact event approaches.
 - [ ] Mobile-optimized layout.
+
+## Test Status
+- Backend pytest: **100% (15/15)** — see `/app/backend/tests/test_rtl_api.py`.
+- Frontend Playwright: **100%** — all pages render with live data.
+imized layout.
 
 ## Test Status
 - Backend pytest: **100% (15/15)** — see `/app/backend/tests/test_rtl_api.py`.

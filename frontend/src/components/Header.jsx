@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Activity, Newspaper, Calendar as CalendarIcon, Layers } from "lucide-react";
+import Logo from "@/components/Logo";
 
 const NAV = [
     { to: "/", label: "Terminal", icon: Activity },
@@ -12,24 +13,13 @@ export default function Header() {
     const { pathname } = useLocation();
     return (
         <header
-            className="sticky top-0 z-50 border-b border-white/[0.08] backdrop-blur-xl bg-[#050505]/80"
+            className="sticky top-0 z-50 border-b border-white/[0.06] backdrop-blur-xl bg-black/80"
             data-testid="rtl-header"
         >
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8">
-                <div className="flex items-center justify-between h-16">
-                    <Link to="/" className="flex items-center gap-3 group" data-testid="rtl-logo">
-                        <div className="flex items-center gap-2">
-                            <div className="font-headings font-bold text-2xl tracking-tight">RTL</div>
-                            <div className="hidden md:block w-px h-5 bg-white/15" />
-                            <div className="hidden md:block">
-                                <div className="text-[10px] tracking-[0.22em] uppercase txt-mute font-headings">
-                                    Ritchnygie
-                                </div>
-                                <div className="text-[10px] tracking-[0.22em] uppercase txt-sec font-headings">
-                                    Trading Lab
-                                </div>
-                            </div>
-                        </div>
+                <div className="flex items-center justify-between h-14">
+                    <Link to="/" data-testid="rtl-logo" className="group">
+                        <Logo size={28} />
                     </Link>
 
                     <nav className="flex items-center gap-1">
@@ -40,13 +30,14 @@ export default function Header() {
                                     key={to}
                                     to={to}
                                     data-testid={`nav-${label.toLowerCase()}`}
-                                    className={`flex items-center gap-2 px-3 py-2 text-xs font-headings tracking-[0.18em] uppercase transition-colors ${
+                                    className={`flex items-center gap-2 px-3 py-2 text-[10px] font-headings tracking-[0.22em] uppercase transition-colors ${
                                         active
-                                            ? "text-white border-b border-white"
-                                            : "txt-sec hover:text-white"
+                                            ? "text-white"
+                                            : "txt-mute hover:text-white"
                                     }`}
+                                    style={active ? { borderBottom: "1px solid #3b82f6" } : {}}
                                 >
-                                    <Icon size={14} />
+                                    <Icon size={12} />
                                     <span className="hidden md:inline">{label}</span>
                                 </Link>
                             );
@@ -55,8 +46,8 @@ export default function Header() {
 
                     <div className="hidden md:flex items-center gap-2">
                         <div className="live-dot" />
-                        <span className="text-[10px] tracking-[0.22em] uppercase txt-sec font-headings">
-                            Live · Macro Intelligence
+                        <span className="text-[9px] tracking-[0.28em] uppercase txt-sec font-headings">
+                            Live · 24/7
                         </span>
                     </div>
                 </div>

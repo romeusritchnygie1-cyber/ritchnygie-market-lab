@@ -14,6 +14,7 @@ from services.calendar import get_economic_calendar
 from services.news_service import get_combined_news, get_newsapi_headlines
 from services.london_session import session_status
 from services.fred_service import get_macro_panel, fetch_series
+from services.ohlc import get_ohlc
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
@@ -111,6 +112,11 @@ async def macro_series(series_id: str):
     if not data:
         raise HTTPException(status_code=404, detail="series not found")
     return data
+
+
+@api_router.get("/ohlc/{symbol}")
+async def ohlc(symbol: str, period: str = "3mo", interval: str = "1d"):
+    return get_ohlc(symbol, period=period, interval=interval)
 
 
 @api_router.get("/symbols")

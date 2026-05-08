@@ -3,7 +3,7 @@ import axios from "axios";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
 
-const api = axios.create({ baseURL: API, timeout: 25000 });
+const api = axios.create({ baseURL: API, timeout: 60000 });
 
 export const fetchHero = () => api.get("/dashboard/hero").then((r) => r.data);
 export const fetchTickerBar = () => api.get("/dashboard/ticker-bar").then((r) => r.data);

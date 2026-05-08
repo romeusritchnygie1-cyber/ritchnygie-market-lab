@@ -1,84 +1,112 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap");
 @import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,400,700,600&display=swap");
 
+/* ================================
+   RTL Pro Trading Terminal — pure black, dense, institutional
+   ================================ */
 .rtl-root {
-    background-color: #050505;
-    background-image:
-        radial-gradient(circle at 12% 18%, rgba(59, 130, 246, 0.06) 0%, transparent 35%),
-        radial-gradient(circle at 88% 8%, rgba(255, 255, 255, 0.04) 0%, transparent 40%),
-        linear-gradient(180deg, #050505 0%, #050505 100%);
-    color: #ffffff;
+    background-color: #000000;
+    color: #f4f4f5;
     min-height: 100vh;
     font-family: "IBM Plex Sans", sans-serif;
     -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "tnum";
 }
 
-/* Base typography */
+/* Tabular nums for ALL numeric data */
+.font-mono {
+    font-family: "JetBrains Mono", monospace;
+    font-variant-numeric: tabular-nums;
+}
 .font-headings { font-family: "Cabinet Grotesk", sans-serif; letter-spacing: -0.01em; }
-.font-mono     { font-family: "JetBrains Mono", monospace; }
 .font-body     { font-family: "IBM Plex Sans", sans-serif; }
 
-/* Card surfaces */
-.rtl-card {
-    background: #161616;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
-    transition: border-color 0.2s ease, transform 0.2s ease;
-}
-.rtl-card:hover {
-    border-color: rgba(255, 255, 255, 0.22);
-}
+/* === Surfaces ===
+   We layer 3 levels of black for depth without using lighter grays. */
+.rtl-bg-base    { background-color: #000000; }
+.rtl-bg-panel   { background-color: #060606; }
+.rtl-bg-card    { background-color: #0a0a0a; }
+.rtl-bg-hover   { background-color: #0f0f0f; }
 
-/* Card eyebrow / label */
+/* Standard professional card — sharp 2px corners, single hairline border */
+.rtl-card-pro {
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    transition: border-color 0.18s ease;
+}
+.rtl-card-pro:hover { border-color: rgba(255, 255, 255, 0.18); }
+
+/* Legacy alias (still used by older components until migrated) */
+.rtl-card {
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    transition: border-color 0.18s ease;
+}
+.rtl-card:hover { border-color: rgba(255, 255, 255, 0.18); }
+
+/* === Eyebrow / labels === */
 .rtl-eyebrow {
     font-family: "Cabinet Grotesk", sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.22em;
+    font-size: 9px;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: #a1a1aa;
+    color: #71717a;
     font-weight: 600;
 }
+.rtl-eyebrow-strong {
+    color: #d4d4d8;
+    font-weight: 700;
+}
 
-/* Hero ticker */
+/* === Hero ticker === */
 .rtl-hero-price {
     font-family: "JetBrains Mono", monospace;
     font-weight: 500;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.045em;
     line-height: 0.92;
+    font-variant-numeric: tabular-nums;
 }
 
-/* Color utilities */
+/* === Color tokens === */
 .txt-up   { color: #3b82f6; }
 .txt-down { color: #ef4444; }
 .txt-warn { color: #f59e0b; }
-.txt-mute { color: #71717a; }
+.txt-mute { color: #52525b; }
 .txt-sec  { color: #a1a1aa; }
+.txt-hi   { color: #ffffff; }
 
-.bg-up   { background-color: rgba(59, 130, 246, 0.12); }
-.bg-down { background-color: rgba(239, 68, 68, 0.12); }
+.bg-up   { background-color: rgba(59, 130, 246, 0.10); }
+.bg-down { background-color: rgba(239, 68, 68, 0.10); }
 
-/* Hero Section subtle texture overlay */
+/* === Hero chamber === */
 .rtl-hero {
-    background: linear-gradient(135deg, #0a0a0a 0%, #111111 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        radial-gradient(1200px 400px at 90% -10%, rgba(59,130,246,0.10), transparent 60%),
+        radial-gradient(800px 300px at 0% 100%, rgba(255,255,255,0.025), transparent 60%),
+        #060606;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
     position: relative;
     overflow: hidden;
 }
-.rtl-hero::before {
+.rtl-hero::after {
     content: "";
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background-image:
-        radial-gradient(800px 200px at 90% 10%, rgba(59, 130, 246, 0.08), transparent 60%),
-        radial-gradient(400px 200px at 0% 100%, rgba(255, 255, 255, 0.03), transparent 60%);
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
     pointer-events: none;
+    mask-image: radial-gradient(circle at center, #000 30%, transparent 80%);
 }
 
-/* Marquee */
+/* === Marquee tape === */
 .marquee {
     display: flex;
     gap: 2.5rem;
-    animation: marquee 60s linear infinite;
+    animation: marquee 90s linear infinite;
     white-space: nowrap;
     width: max-content;
 }
@@ -87,58 +115,64 @@
     100% { transform: translateX(-50%); }
 }
 
-/* Pulse for live dot */
+/* === Live pulse === */
 @keyframes livePulse {
     0%,100% { opacity: 1; transform: scale(1); }
-    50%     { opacity: 0.45; transform: scale(0.9); }
+    50%     { opacity: 0.4;  transform: scale(0.85); }
 }
 .live-dot {
-    width: 8px; height: 8px; border-radius: 50%;
+    width: 6px; height: 6px; border-radius: 50%;
     background-color: #3b82f6;
+    box-shadow: 0 0 8px rgba(59,130,246,0.6);
     animation: livePulse 1.6s ease-in-out infinite;
 }
 
-/* Heat tile */
+/* === Heat tile === */
 .heat-tile {
-    background: #161616;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
-    padding: 16px;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    padding: 14px;
+    transition: transform 0.16s ease, border-color 0.16s ease;
 }
-.heat-tile:hover { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.25); }
+.heat-tile:hover { transform: translateY(-1px); border-color: rgba(255, 255, 255, 0.22); }
 
-/* Regime badge */
+/* === Regime badge === */
 .regime-badge {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: #0c0c0c;
-    padding: 6px 12px;
-    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: #050505;
+    padding: 5px 10px;
+    border-radius: 2px;
     font-family: "Cabinet Grotesk", sans-serif;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
 }
-.regime-risk-on  { border-color: rgba(59, 130, 246, 0.5); color: #3b82f6; }
-.regime-risk-off { border-color: rgba(239, 68, 68, 0.5);  color: #ef4444; }
+.regime-risk-on  { border-color: rgba(59, 130, 246, 0.5); color: #3b82f6; background: rgba(59,130,246,0.06); }
+.regime-risk-off { border-color: rgba(239, 68, 68, 0.5);  color: #ef4444; background: rgba(239,68,68,0.06); }
 .regime-trending { border-color: rgba(255, 255, 255, 0.4); color: #ffffff; }
-.regime-warn     { border-color: rgba(245, 158, 11, 0.5); color: #f59e0b; }
+.regime-warn     { border-color: rgba(245, 158, 11, 0.5); color: #f59e0b; background: rgba(245,158,11,0.06); }
 
-/* Number flash on update */
-@keyframes flashUp {
-    0% { background-color: rgba(59, 130, 246, 0.0); }
-    20% { background-color: rgba(59, 130, 246, 0.16); }
-    100% { background-color: rgba(59, 130, 246, 0.0); }
-}
-@keyframes flashDown {
-    0% { background-color: rgba(239, 68, 68, 0.0); }
-    20% { background-color: rgba(239, 68, 68, 0.16); }
-    100% { background-color: rgba(239, 68, 68, 0.0); }
+/* === Pro section header bars === */
+.rtl-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #060606;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-bottom: none;
 }
 
-/* Scrollbar */
+/* === Scrollbar === */
 .rtl-root ::-webkit-scrollbar { width: 8px; height: 8px; }
-.rtl-root ::-webkit-scrollbar-track { background: #050505; }
-.rtl-root ::-webkit-scrollbar-thumb { background: #1f1f1f; border-radius: 4px; }
-.rtl-root ::-webkit-scrollbar-thumb:hover { background: #2f2f2f; }
+.rtl-root ::-webkit-scrollbar-track { background: #000; }
+.rtl-root ::-webkit-scrollbar-thumb { background: #18181b; border-radius: 2px; }
+.rtl-root ::-webkit-scrollbar-thumb:hover { background: #27272a; }
+
+/* === Selection === */
+::selection { background: rgba(59,130,246,0.4); color: #fff; }
+
+/* === Misc utility === */
+.divider-y > * + * { border-top: 1px solid rgba(255,255,255,0.05); }
