@@ -40,11 +40,12 @@ favors London session and also trades Silver. Wants institutional/macro intellig
 - [x] Multi-page nav: Terminal / Watchlist / Intel / Calendar.
 - [x] Custom RTL SVG logo (geometric tick-pattern monogram).
 
-## Phase 2 — Backlog (P0 next)
-- [ ] **Trade Journal** — log entries with screenshots, tags, P&L, session.
-- [ ] **Strategy Backtester** — run user's macro strategy on historical OHLC.
-- [ ] **Probability Engine** — win-rate by setup × session × day-of-week.
-- [ ] **Behavior Stats** — volatility, correlation matrix across watchlist.
+## Phase 2 — Implemented (Feb 2026)
+- [x] **Trade Journal** (full CRUD): symbol / side / session / setup / entry / exit / stop / target / size / pnl / r_multiple / regime / notes / tags / screenshot URL
+- [x] **Behavior Stats**: winrate, expectancy, avg-win-R / avg-loss-R, breakdowns by Session × Day × Symbol × Setup
+- [x] **Probability Engine**: edge_score ranking by (setup × side) and (day × session × symbol)
+- [x] **Strategy Backtester**: regime_breakout (ADX + 20D high) and mean_reversion (RSI extremes), 1y / 2y / 5y, with equity curve, drawdown, P&L, winrate
+- [x] All persisted in MongoDB; Lab page with lightweight-charts equity-curve viz
 
 ## Phase 3 — Backlog (P1)
 - [ ] **AI Clarity Score** — daily 0–100 score "is the market clear enough to trade".
