@@ -1,0 +1,80 @@
+{
+  "app_name": "Ritchnygie Trading Lab (RTL)",
+  "theme": "dark",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "vibe": "Institutional, serious macro analyst's terminal, Bloomberg meets modern fintech",
+  "colors": {
+    "background_base": "#050505",
+    "background_surface": "#0F0F0F",
+    "background_card": "#161616",
+    "border_subtle": "rgba(255, 255, 255, 0.08)",
+    "border_focus": "rgba(255, 255, 255, 0.25)",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#A1A1AA",
+    "text_muted": "#71717A",
+    "accent_primary": "#FFFFFF",
+    "accent_secondary": "#3B82F6",
+    "status_up": "#3B82F6",
+    "status_down": "#EF4444",
+    "status_warning": "#F59E0B",
+    "commodity_gold": "#FBBF24",
+    "commodity_silver": "#E2E8F0"
+  },
+  "typography": {
+    "font_headings": "Cabinet Grotesk, sans-serif",
+    "font_body": "IBM Plex Sans, sans-serif",
+    "font_mono": "JetBrains Mono, monospace",
+    "sizing": {
+      "hero_ticker": "text-6xl tracking-tighter font-mono font-medium",
+      "h2": "text-2xl tracking-tight font-headings",
+      "h3": "text-xl tracking-tight font-headings",
+      "card_title": "text-xs tracking-[0.2em] uppercase font-headings text-text_secondary",
+      "body": "text-sm font-body text-text_secondary",
+      "data_point": "text-base font-mono text-text_primary"
+    }
+  },
+  "layout": {
+    "strategy": "The 'Control Room' Grid",
+    "container": "w-full max-w-[1920px] mx-auto px-4 md:px-8",
+    "grid_base": "grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 or gap-6",
+    "card_padding": "p-5 or p-6",
+    "radius": "rounded-md (max 6px) to maintain a rigid institutional feel, no soft borders",
+    "surfaces": {
+      "header": "backdrop-blur-xl bg-background_base/80 border-b border-border_subtle z-50",
+      "cards": "bg-background_card border border-border_subtle shadow-sm hover:border-border_focus transition-colors duration-200"
+    }
+  },
+  "components": {
+    "tickers": "Top marquee or sticky bar using JetBrains Mono, separated by subtle borders, colored values (Blue for up, Red for down).",
+    "hero_spx": "Large central or top-left section focusing on Live S&P 500 CFD ticker. Stark white, massive monospace type.",
+    "mag7_heatmap": "Bento grid of 7 blocks. Color intensity scales with percentage change. Text overlaid in white/black for contrast.",
+    "news_feed": "Dense, text-heavy list without images. Use 'IBM Plex Sans'. Include tags (e.g., [Morgan Stanley], [Macro]) with mono styling.",
+    "regime_engine": "Prominent status card using stark high-contrast badges (e.g., 'RISK-OFF' in Signal Red with 1px solid border).",
+    "economic_calendar": "Minimalist table layout, rigid grid lines, rows collapse/expand, timestamp in monospace.",
+    "session_tracker": "Visual timeline/clock indicating London Session overlap. Use silver accent color."
+  },
+  "motion": {
+    "interactions": "Hover states on cards slightly brighten the border (border-white/25). Do not use excessive scaling.",
+    "data_updates": "Framer Motion layout animations for sorting data, subtle flash (green/red background fade) when price updates."
+  },
+  "media": {
+    "logo_url": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/f04d62b1-2f6f-4557-9edd-5bae8e00f25a/images/4be75f047cd5817a6a0e2fd3b0dc7395b9d4597a326f9dac7e3a5898fdf85f5b.png",
+      "description": "Clean minimalist sophisticated logo for 'Ritchnygie Trading Lab', letters RTL"
+    },
+    "background_url": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/f04d62b1-2f6f-4557-9edd-5bae8e00f25a/images/e1bf18dd752caabdabdbe26afbe30a07b6b32c777e6dad2006edde400052e073.png",
+      "description": "Abstract dark obsidian texture, subtle glassmorphism geometric shapes, premium financial technology background",
+      "usage": "Use selectively as a very low-opacity (10-15%) background for the hero section or the whole app to kill digital flatness, but preserve readability."
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly avoid any green-on-black stereotypical 'retail trading' aesthetics. Up ticks should be Signal Blue (#3B82F6), down ticks Signal Red (#EF4444).",
+    "Apply 'data-testid' to all interactive elements for robust testing.",
+    "Use pure HTML/Tailwind for the grid structures, use customized shadcn/ui (tables, badges) for dense data.",
+    "Import Cabinet Grotesk, IBM Plex Sans, and JetBrains Mono fonts via Google Fonts or Fontshare.",
+    "Ensure the hero SPX CFD is the absolute focal point.",
+    "Treat the UI as a serious 'Control Room' - every pixel utilized, no arbitrary white/negative space like a marketing site, but structured density.",
+    "Add 'lucide-react' or 'phosphor-icons' for professional, sharp iconography."
+  ]
+}
