@@ -21,9 +21,9 @@ export default function Header() {
             data-testid="rtl-header"
         >
             <div className="w-full max-w-[1920px] mx-auto px-4 md:px-8">
-                <div className="flex items-center justify-between h-16">
+                <div className="flex items-center justify-between h-20">
                     <Link to="/" data-testid="rtl-logo" className="group">
-                        <Logo size={32} />
+                        <Logo size={56} />
                     </Link>
 
                     <nav className="flex items-center gap-1">
