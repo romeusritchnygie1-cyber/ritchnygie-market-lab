@@ -87,6 +87,8 @@ export default function Journal() {
                                         <th className="text-right p-3 font-medium">Exit</th>
                                         <th className="text-right p-3 font-medium">P&L</th>
                                         <th className="text-right p-3 font-medium">R</th>
+                                        <th className="text-right p-3 font-medium">ADX</th>
+                                        <th className="text-right p-3 font-medium">ATR</th>
                                         <th className="text-left p-3 font-medium">Notes</th>
                                         <th className="p-3" />
                                     </tr>
@@ -108,6 +110,12 @@ export default function Journal() {
                                                 </td>
                                                 <td className={`p-3 font-mono text-right ${(t.r_multiple ?? 0) >= 0 ? "txt-up" : "txt-down"}`}>
                                                     {t.r_multiple !== null && t.r_multiple !== undefined ? t.r_multiple.toFixed(2) + "R" : "—"}
+                                                </td>
+                                                <td className="p-3 font-mono text-right txt-warn">
+                                                    {t.adx !== null && t.adx !== undefined ? t.adx.toFixed(1) : "—"}
+                                                </td>
+                                                <td className="p-3 font-mono text-right txt-sec">
+                                                    {t.atr !== null && t.atr !== undefined ? t.atr.toFixed(3) : "—"}
                                                 </td>
                                                 <td className="p-3 text-xs txt-sec max-w-[280px] truncate" title={t.notes}>
                                                     {t.notes || "—"}

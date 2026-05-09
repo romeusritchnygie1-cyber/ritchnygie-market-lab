@@ -1,7 +1,7 @@
 """Behavior & probability analytics over the trade journal."""
 from collections import defaultdict
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import statistics
 
 
@@ -16,10 +16,14 @@ def _parse_at(t: dict) -> datetime:
 
 
 def _is_win(t: dict) -> bool:
+    # Honor explicit `result` field if present
+    r = t.get("result")
+    if r:
+        return r == "win"
     p = t.get("pnl")
     if p is None:
-        r = t.get("r_multiple")
-        return (r or 0) > 0
+        rm = t.get("r_multiple")
+        return (rm or 0) > 0
     return p > 0
 
 
@@ -31,12 +35,18 @@ def _pnl(t: dict) -> float:
     return t.get("pnl") or 0.0
 
 
-def behavior_stats(trades: List[dict]) -> Dict[str, Any]:
-    """Top-level winrate / expectancy / by-session / by-day / by-symbol breakdown."""
+def behavior_stats(trades: List[dict], symbol_filter: Optional[str] = None) -> Dict[str, Any]:
+    """Top-level winrate / expectancy / by-session / by-day / by-symbol breakdown.
+    If `symbol_filter` is provided (e.g. 'SPX', 'SILVER', 'GOLD'), restrict to those."""
+    if symbol_filter:
+        sf = symbol_filter.upper()
+        trades = [t for t in trades if (t.get("symbol") or "").upper() == sf]
     n = len(trades)
     if n == 0:
         return {"total": 0, "winrate": 0.0, "expectancy": 0.0, "avg_r": 0.0,
-                "total_pnl": 0.0, "by_session": [], "by_day": [], "by_symbol": [], "by_setup": []}
+                "total_pnl": 0.0, "avg_adx_winners": 0.0, "avg_adx_losers": 0.0,
+                "avg_atr_winners": 0.0, "avg_atr_losers": 0.0,
+                "by_session": [], "by_day": [], "by_symbol": [], "by_setup": []}
 
     wins = [t for t in trades if _is_win(t)]
     losses = [t for t in trades if not _is_win(t)]
@@ -80,17 +90,26 @@ def behavior_stats(trades: List[dict]) -> Dict[str, Any]:
         "avg_win_r": round(avg_win_r, 2),
         "avg_loss_r": round(avg_loss_r, 2),
         "total_pnl": round(sum(_pnl(t) for t in trades), 2),
+        "avg_adx_winners": round(statistics.mean([t["adx"] for t in wins   if t.get("adx") is not None]), 1) if any(t.get("adx") is not None for t in wins)   else 0.0,
+        "avg_adx_losers":  round(statistics.mean([t["adx"] for t in losses if t.get("adx") is not None]), 1) if any(t.get("adx") is not None for t in losses) else 0.0,
+        "avg_atr_winners": round(statistics.mean([t["atr"] for t in wins   if t.get("atr") is not None]), 4) if any(t.get("atr") is not None for t in wins)   else 0.0,
+        "avg_atr_losers":  round(statistics.mean([t["atr"] for t in losses if t.get("atr") is not None]), 4) if any(t.get("atr") is not None for t in losses) else 0.0,
         "by_session": by_session,
         "by_day": by_day,
         "by_symbol": by_symbol,
         "by_setup": by_setup,
+        "symbol_filter": symbol_filter,
     }
 
 
-def probability_engine(trades: List[dict]) -> Dict[str, Any]:
-    """Heuristic edge calculator across multiple cuts of the journal."""
+def probability_engine(trades: List[dict], symbol_filter: Optional[str] = None) -> Dict[str, Any]:
+    """Heuristic edge calculator across multiple cuts of the journal.
+    `symbol_filter` restricts to trades on that symbol (SPX/SILVER/GOLD/...)."""
+    if symbol_filter:
+        sf = symbol_filter.upper()
+        trades = [t for t in trades if (t.get("symbol") or "").upper() == sf]
     if not trades:
-        return {"setups": [], "context": []}
+        return {"setups": [], "context": [], "adx_buckets": [], "atr_buckets": [], "symbol_filter": symbol_filter}
 
     def edge(group: List[dict]):
         if not group:
@@ -130,4 +149,54 @@ def probability_engine(trades: List[dict]) -> Dict[str, Any]:
             ctx_rows.append({"day": dy, "session": ses, "symbol": sym, **e})
     ctx_rows.sort(key=lambda r: -r["edge_score"])
 
-    return {"setups": setup_rows[:30], "context": ctx_rows[:30]}
+    # ADX buckets — does my edge improve when ADX > 25 / 30?
+    def bucket_adx(t):
+        a = t.get("adx")
+        if a is None:
+            return None
+        if a >= 35: return "ADX 35+"
+        if a >= 25: return "ADX 25-35"
+        if a >= 20: return "ADX 20-25"
+        return "ADX <20"
+
+    def bucket_atr(t):
+        a = t.get("atr")
+        e = t.get("entry")
+        if a is None or not e:
+            return None
+        atr_pct = (a / e) * 100
+        if atr_pct >= 1.5: return "Vol HIGH"
+        if atr_pct >= 0.8: return "Vol NORMAL"
+        return "Vol LOW"
+
+    adx_buckets_data: Dict[str, List[dict]] = defaultdict(list)
+    atr_buckets_data: Dict[str, List[dict]] = defaultdict(list)
+    for t in trades:
+        b = bucket_adx(t)
+        if b:
+            adx_buckets_data[b].append(t)
+        b2 = bucket_atr(t)
+        if b2:
+            atr_buckets_data[b2].append(t)
+
+    adx_rows = []
+    for k, ts in adx_buckets_data.items():
+        e = edge(ts)
+        if e:
+            adx_rows.append({"bucket": k, **e})
+    adx_rows.sort(key=lambda r: -r["edge_score"])
+
+    atr_rows = []
+    for k, ts in atr_buckets_data.items():
+        e = edge(ts)
+        if e:
+            atr_rows.append({"bucket": k, **e})
+    atr_rows.sort(key=lambda r: -r["edge_score"])
+
+    return {
+        "setups": setup_rows[:30],
+        "context": ctx_rows[:30],
+        "adx_buckets": adx_rows,
+        "atr_buckets": atr_rows,
+        "symbol_filter": symbol_filter,
+    }

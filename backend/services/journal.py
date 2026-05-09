@@ -17,6 +17,9 @@ class TradeBase(BaseModel):
     target: Optional[float] = None
     pnl: Optional[float] = None
     r_multiple: Optional[float] = None  # realized R
+    result: Optional[Literal["win", "loss", "breakeven"]] = None
+    adx: Optional[float] = None         # ADX(14) at entry
+    atr: Optional[float] = None         # ATR(14) at entry (absolute price units)
     regime: Optional[str] = None
     notes: Optional[str] = None
     tags: List[str] = Field(default_factory=list)
@@ -46,6 +49,9 @@ class TradeUpdate(BaseModel):
     target: Optional[float] = None
     pnl: Optional[float] = None
     r_multiple: Optional[float] = None
+    result: Optional[Literal["win", "loss", "breakeven"]] = None
+    adx: Optional[float] = None
+    atr: Optional[float] = None
     regime: Optional[str] = None
     notes: Optional[str] = None
     tags: Optional[List[str]] = None

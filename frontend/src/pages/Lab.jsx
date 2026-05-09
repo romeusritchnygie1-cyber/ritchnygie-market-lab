@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRef } from "react";
 import Header from "@/components/Header";
 import TickerStrip from "@/components/TickerStrip";
-import { fetchBehavior, fetchProbability, runBacktest } from "@/lib/api";
+import api, { runBacktest } from "@/lib/api";
 import { createChart, AreaSeries } from "lightweight-charts";
 import { Play } from "lucide-react";
 
@@ -13,7 +13,20 @@ const STRATEGIES = [
 ];
 const PERIODS = ["1y", "2y", "5y"];
 
+const MARKET_FILTERS = [
+    { key: null,       label: "All Markets",  color: "#a1a1aa" },
+    { key: "SPX",      label: "S&P 500",       color: "#60a5fa" },
+    { key: "SILVER",   label: "Silver",        color: "#67e8f9" },
+    { key: "GOLD",     label: "Gold",          color: "#fbbf24" },
+];
+
+const fetchBehaviorFiltered = (symbol) =>
+    api.get("/journal/behavior", { params: symbol ? { symbol } : {} }).then((r) => r.data);
+const fetchProbabilityFiltered = (symbol) =>
+    api.get("/journal/probability", { params: symbol ? { symbol } : {} }).then((r) => r.data);
+
 export default function Lab() {
+    const [filter, setFilter] = useState(MARKET_FILTERS[0]);
     const [behavior, setBehavior] = useState(null);
     const [prob, setProb] = useState(null);
 
@@ -29,10 +42,10 @@ export default function Lab() {
 
     useEffect(() => {
         (async () => {
-            try { setBehavior(await fetchBehavior()); } catch { /* ignore */ }
-            try { setProb(await fetchProbability()); } catch { /* ignore */ }
+            try { setBehavior(await fetchBehaviorFiltered(filter.key)); } catch { /* ignore */ }
+            try { setProb(await fetchProbabilityFiltered(filter.key)); } catch { /* ignore */ }
         })();
-    }, []);
+    }, [filter]);
 
     const run = async () => {
         try {
@@ -49,36 +62,70 @@ export default function Lab() {
             <Header />
             <TickerStrip />
 
-            <main className="w-full max-w-[1920px] mx-auto px-4 md:px-8 py-6">
-                <div className="mb-6">
-                    <div className="rtl-eyebrow">Quant Lab</div>
-                    <h1 className="font-headings font-bold text-3xl md:text-4xl tracking-tight mt-1">
-                        Backtester · Probability · Behavior
-                    </h1>
+            <main className="w-full max-w-[1920px] mx-auto px-4 md:px-8 py-8">
+                <div className="mb-6 flex items-end justify-between flex-wrap gap-4">
+                    <div>
+                        <div className="rtl-eyebrow rtl-eyebrow-strong">Quant Lab</div>
+                        <h1 className="font-headings font-bold text-3xl md:text-4xl tracking-tight mt-2">
+                            Backtester · Probability · Behavior
+                        </h1>
+                        <p className="text-base txt-sec mt-2">Real stats computed from your trade journal — filter by market.</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2" data-testid="market-filter">
+                        {MARKET_FILTERS.map((m) => {
+                            const active = filter.key === m.key;
+                            return (
+                                <button
+                                    key={m.label}
+                                    onClick={() => setFilter(m)}
+                                    data-testid={`filter-${m.key || "all"}`}
+                                    className="text-xs tracking-[0.22em] uppercase font-headings px-3 py-2 rounded transition-all border"
+                                    style={
+                                        active
+                                            ? { borderColor: m.color + "80", backgroundColor: m.color + "20", color: m.color }
+                                            : { borderColor: "transparent", color: "var(--rtl-text-muted)" }
+                                    }
+                                >
+                                    {m.label}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 {/* Behavior Stats */}
-                <section className="rtl-card-pro p-5 mb-3" data-testid="behavior-section">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="rtl-eyebrow rtl-eyebrow-strong">Behavior Stats</div>
-                        <span className="text-[10px] tracking-[0.18em] uppercase txt-mute font-headings">
-                            Computed from your journal
-                        </span>
+                <section className="rtl-card-pro p-6 mb-3" data-testid="behavior-section">
+                    <div className="flex items-center justify-between mb-5">
+                        <div>
+                            <div className="rtl-eyebrow rtl-eyebrow-strong">Behavior Stats</div>
+                            <p className="text-sm txt-sec mt-1">
+                                {filter.key ? `Filtered to ${filter.label}` : "All markets"} · live from journal
+                            </p>
+                        </div>
                     </div>
 
                     {!behavior || behavior.total === 0 ? (
-                        <div className="text-center py-8 txt-mute text-sm">
-                            Add trades in the <span className="text-white">Journal</span> to see your stats here.
+                        <div className="text-center py-8 txt-mute text-base">
+                            No trades yet for {filter.label.toLowerCase()}. Add trades in the <span className="text-white">Journal</span> tab.
                         </div>
                     ) : (
                         <>
                             <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
-                                <Stat label="Trades" value={behavior.total} />
-                                <Stat label="Winrate" value={`${behavior.winrate}%`} accent={behavior.winrate >= 50 ? "up" : "down"} />
-                                <Stat label="Expectancy" value={behavior.expectancy?.toFixed(3) || "0"} accent={behavior.expectancy >= 0 ? "up" : "down"} />
-                                <Stat label="Avg Win R" value={behavior.avg_win_r?.toFixed(2) + "R"} accent="up" />
-                                <Stat label="Avg Loss R" value={behavior.avg_loss_r?.toFixed(2) + "R"} accent="down" />
+                                <Stat label="Trades" value={behavior.total} color="card-blue" text="#60a5fa" />
+                                <Stat label="Winrate" value={`${behavior.winrate}%`} color={behavior.winrate >= 50 ? "card-emerald" : "card-red"} text={behavior.winrate >= 50 ? "#34d399" : "#f87171"} />
+                                <Stat label="Expectancy" value={behavior.expectancy?.toFixed(3) || "0"} color="card-amber" text="#fbbf24" />
+                                <Stat label="Avg Win R" value={behavior.avg_win_r?.toFixed(2) + "R"} color="card-blue" text="#60a5fa" />
+                                <Stat label="Avg Loss R" value={behavior.avg_loss_r?.toFixed(2) + "R"} color="card-red" text="#f87171" />
                             </div>
+
+                            {(behavior.avg_adx_winners > 0 || behavior.avg_atr_winners > 0) && (
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                                    <Stat label="Avg ADX (wins)"   value={behavior.avg_adx_winners.toFixed(1)} color="card-orange" text="#fb923c" />
+                                    <Stat label="Avg ADX (losses)" value={behavior.avg_adx_losers.toFixed(1)}  color="card-purple" text="#c084fc" />
+                                    <Stat label="Avg ATR (wins)"   value={behavior.avg_atr_winners.toFixed(3)} color="card-orange" text="#fb923c" />
+                                    <Stat label="Avg ATR (losses)" value={behavior.avg_atr_losers.toFixed(3)}  color="card-purple" text="#c084fc" />
+                                </div>
+                            )}
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                                 <BreakdownTable title="By Session" rows={behavior.by_session} />
@@ -91,30 +138,39 @@ export default function Lab() {
                 </section>
 
                 {/* Probability Engine */}
-                <section className="rtl-card-pro p-5 mb-3" data-testid="probability-section">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="rtl-eyebrow rtl-eyebrow-strong">Probability Engine</div>
-                        <span className="text-[10px] tracking-[0.18em] uppercase txt-mute font-headings">
-                            Edge by setup × context
-                        </span>
+                <section className="rtl-card-pro p-6 mb-3" data-testid="probability-section">
+                    <div className="flex items-center justify-between mb-5">
+                        <div>
+                            <div className="rtl-eyebrow rtl-eyebrow-strong">Probability Engine</div>
+                            <p className="text-sm txt-sec mt-1">Edge-score across setups, contexts, ADX & ATR regimes</p>
+                        </div>
                     </div>
 
                     {!prob || (prob.setups?.length === 0 && prob.context?.length === 0) ? (
-                        <div className="text-center py-8 txt-mute text-sm">
+                        <div className="text-center py-8 txt-mute text-base">
                             Probability edge unlocks once you've logged a few trades.
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                             <ProbabilityTable title="Top Setup × Side Edges" rows={prob.setups} cols={["setup", "side"]} />
                             <ProbabilityTable title="Day × Session × Symbol Edges" rows={prob.context} cols={["day", "session", "symbol"]} />
+                            {prob.adx_buckets?.length > 0 && (
+                                <ProbabilityTable title="ADX Regime Edge" rows={prob.adx_buckets} cols={["bucket"]} />
+                            )}
+                            {prob.atr_buckets?.length > 0 && (
+                                <ProbabilityTable title="ATR Volatility Edge" rows={prob.atr_buckets} cols={["bucket"]} />
+                            )}
                         </div>
                     )}
                 </section>
 
                 {/* Backtester */}
-                <section className="rtl-card-pro p-5" data-testid="backtest-section">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="rtl-eyebrow rtl-eyebrow-strong">Strategy Backtester</div>
+                <section className="rtl-card-pro p-6" data-testid="backtest-section">
+                    <div className="flex items-center justify-between mb-5">
+                        <div>
+                            <div className="rtl-eyebrow rtl-eyebrow-strong">Strategy Backtester</div>
+                            <p className="text-sm txt-sec mt-1">Run macro strategies on real OHLC history</p>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-5">
@@ -133,7 +189,7 @@ export default function Lab() {
                             onClick={run}
                             disabled={running}
                             data-testid="run-backtest"
-                            className="flex items-center justify-center gap-2 bg-blue-500 text-black hover:bg-blue-400 transition-colors text-[11px] tracking-[0.22em] uppercase font-headings disabled:opacity-50 px-4"
+                            className="flex items-center justify-center gap-2 bg-blue-500 text-black hover:bg-blue-400 transition-colors text-xs tracking-[0.22em] uppercase font-headings disabled:opacity-50 px-4"
                         >
                             <Play size={12} fill="currentColor" /> {running ? "Running…" : "Run"}
                         </button>
@@ -143,9 +199,9 @@ export default function Lab() {
                         <>
                             <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
                                 <Stat label="Initial" value={`$${bt.summary.initial}`} />
-                                <Stat label="Final"   value={`$${bt.summary.final}`} accent={bt.summary.final >= bt.summary.initial ? "up" : "down"} />
-                                <Stat label="Return"  value={`${bt.summary.return_pct}%`} accent={bt.summary.return_pct >= 0 ? "up" : "down"} />
-                                <Stat label="Max DD"  value={`${bt.summary.max_dd_pct}%`} accent="down" />
+                                <Stat label="Final"   value={`$${bt.summary.final}`} color={bt.summary.final >= bt.summary.initial ? "card-emerald" : "card-red"} text={bt.summary.final >= bt.summary.initial ? "#34d399" : "#f87171"} />
+                                <Stat label="Return"  value={`${bt.summary.return_pct}%`} color={bt.summary.return_pct >= 0 ? "card-emerald" : "card-red"} text={bt.summary.return_pct >= 0 ? "#34d399" : "#f87171"} />
+                                <Stat label="Max DD"  value={`${bt.summary.max_dd_pct}%`} color="card-red" text="#f87171" />
                                 <Stat label="Trades · Winrate" value={`${bt.summary.trades} · ${bt.summary.winrate}%`} />
                             </div>
                             <EquityCurve data={bt.equity_curve} />
@@ -157,23 +213,30 @@ export default function Lab() {
     );
 }
 
-function Stat({ label, value, accent }) {
-    const cls = accent === "up" ? "txt-up" : accent === "down" ? "txt-down" : "text-white";
+function Stat({ label, value, color = "", text = "" }) {
+    if (color) {
+        return (
+            <div className={`${color} rounded p-3`}>
+                <div className="rtl-eyebrow">{label}</div>
+                <div className="font-mono text-xl mt-1.5" style={{ color: text || "white" }}>{value}</div>
+            </div>
+        );
+    }
     return (
-        <div className="border border-white/[0.06] p-3 rounded-sm">
+        <div className="border border-rtl-soft p-3 rounded">
             <div className="rtl-eyebrow">{label}</div>
-            <div className={`font-mono text-xl mt-1.5 ${cls}`}>{value}</div>
+            <div className="font-mono text-xl mt-1.5 text-white">{value}</div>
         </div>
     );
 }
 
 function BreakdownTable({ title, rows }) {
     return (
-        <div className="border border-white/[0.06] rounded-sm">
-            <div className="rtl-eyebrow px-3 py-2 border-b border-white/[0.06]">{title}</div>
-            <table className="w-full text-xs">
+        <div className="border border-rtl-soft rounded">
+            <div className="rtl-eyebrow px-3 py-2 border-b border-rtl-soft">{title}</div>
+            <table className="w-full text-sm">
                 <thead>
-                    <tr className="text-[9px] tracking-[0.18em] uppercase txt-mute font-headings border-b border-white/[0.06]">
+                    <tr className="text-[10px] tracking-[0.18em] uppercase txt-mute font-headings border-b border-rtl-soft">
                         <th className="text-left px-3 py-1.5">Key</th>
                         <th className="text-right px-3 py-1.5">N</th>
                         <th className="text-right px-3 py-1.5">Win%</th>
@@ -182,7 +245,7 @@ function BreakdownTable({ title, rows }) {
                 </thead>
                 <tbody>
                     {(rows || []).map((r, i) => (
-                        <tr key={i} className="border-b border-white/[0.03]">
+                        <tr key={i} className="border-b border-rtl-soft">
                             <td className="px-3 py-1.5 text-white">{r.key}</td>
                             <td className="px-3 py-1.5 font-mono text-right txt-sec">{r.trades}</td>
                             <td className={`px-3 py-1.5 font-mono text-right ${r.winrate >= 50 ? "txt-up" : "txt-down"}`}>{r.winrate}%</td>
@@ -197,12 +260,12 @@ function BreakdownTable({ title, rows }) {
 
 function ProbabilityTable({ title, rows, cols }) {
     return (
-        <div className="border border-white/[0.06] rounded-sm">
-            <div className="rtl-eyebrow px-3 py-2 border-b border-white/[0.06]">{title}</div>
+        <div className="border border-rtl-soft rounded">
+            <div className="rtl-eyebrow px-3 py-2 border-b border-rtl-soft">{title}</div>
             <div className="overflow-x-auto">
-                <table className="w-full text-xs">
+                <table className="w-full text-sm">
                     <thead>
-                        <tr className="text-[9px] tracking-[0.18em] uppercase txt-mute font-headings border-b border-white/[0.06]">
+                        <tr className="text-[10px] tracking-[0.18em] uppercase txt-mute font-headings border-b border-rtl-soft">
                             {cols.map((c) => <th key={c} className="text-left px-3 py-1.5">{c}</th>)}
                             <th className="text-right px-3 py-1.5">N</th>
                             <th className="text-right px-3 py-1.5">Win%</th>
@@ -212,7 +275,7 @@ function ProbabilityTable({ title, rows, cols }) {
                     </thead>
                     <tbody>
                         {(rows || []).slice(0, 12).map((r, i) => (
-                            <tr key={i} className="border-b border-white/[0.03]">
+                            <tr key={i} className="border-b border-rtl-soft">
                                 {cols.map((c) => <td key={c} className="px-3 py-1.5 text-white">{r[c]}</td>)}
                                 <td className="px-3 py-1.5 font-mono text-right txt-sec">{r.trades}</td>
                                 <td className={`px-3 py-1.5 font-mono text-right ${r.winrate >= 50 ? "txt-up" : "txt-down"}`}>{r.winrate}%</td>
@@ -234,7 +297,7 @@ function EquityCurve({ data }) {
         const chart = createChart(ref.current, {
             autoSize: true,
             localization: { locale: "en-US" },
-            layout: { background: { color: "#000" }, textColor: "#a1a1aa", fontFamily: "JetBrains Mono", fontSize: 11 },
+            layout: { background: { color: "transparent" }, textColor: "#a1a1aa", fontFamily: "JetBrains Mono", fontSize: 11 },
             grid: { vertLines: { color: "rgba(255,255,255,0.04)" }, horzLines: { color: "rgba(255,255,255,0.04)" } },
             rightPriceScale: { borderColor: "rgba(255,255,255,0.08)" },
             timeScale: { borderColor: "rgba(255,255,255,0.08)", timeVisible: true },
@@ -249,7 +312,7 @@ function EquityCurve({ data }) {
         chart.timeScale().fitContent();
         return () => chart.remove();
     }, [data]);
-    return <div ref={ref} style={{ width: "100%", height: 320 }} className="border border-white/[0.06]" data-testid="equity-curve" />;
+    return <div ref={ref} style={{ width: "100%", height: 320 }} className="border border-rtl-soft rounded" data-testid="equity-curve" />;
 }
 
 function FieldSelect({ label, value, onChange, options }) {

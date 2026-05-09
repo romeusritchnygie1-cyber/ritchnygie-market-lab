@@ -194,15 +194,15 @@ async def delete_trade(trade_id: str):
 
 # ============ ANALYTICS ============
 @api_router.get("/journal/behavior")
-async def behavior():
+async def behavior(symbol: Optional[str] = None):
     docs = await db.trades.find({}, {"_id": 0}).to_list(5000)
-    return behavior_stats([doc_to_trade(d) for d in docs])
+    return behavior_stats([doc_to_trade(d) for d in docs], symbol_filter=symbol)
 
 
 @api_router.get("/journal/probability")
-async def probability():
+async def probability(symbol: Optional[str] = None):
     docs = await db.trades.find({}, {"_id": 0}).to_list(5000)
-    return probability_engine([doc_to_trade(d) for d in docs])
+    return probability_engine([doc_to_trade(d) for d in docs], symbol_filter=symbol)
 
 
 # ============ BACKTEST ============
