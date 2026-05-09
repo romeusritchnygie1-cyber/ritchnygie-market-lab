@@ -50,6 +50,14 @@ favors London session and also trades Silver. Wants institutional/macro intellig
 - [x] **Strategy Backtester**: regime_breakout (ADX + 20D high) and mean_reversion (RSI extremes), 1y / 2y / 5y, with equity curve, drawdown, P&L, winrate
 - [x] All persisted in MongoDB; Lab page with lightweight-charts equity-curve viz
 
+## Phase 2.5 — Valuation & Macro Pillars (Feb 9, 2026)
+- [x] **Valuation Engine** (`/api/valuation`): Trailing vs Forward P/E heatmap for SPX (market-cap weighted top-10 SPX components, earnings-yield aggregation), Gold (10Y nominal vs real yield), Silver (Gold/Silver ratio + Copper 20D momentum). Color-coded green (Growth Bet) / amber (Neutral) / red (Caution). Includes drilldown of all 10 SPX components.
+- [x] **Macro Pillars** (`/api/macro-pillars`): 3 institutional gauges
+   - Inflation Watchdog (live CPI YoY from FRED CPIAUCSL): >3% → AMBER, SPX warning
+   - Liquidity Meter (DXY 5d momentum): >+1% → RED, "Reduce Long Exposure"
+   - Fear Index (live VIX): >20 → AMBER alert, >25 → RED panic
+- [x] **SPX hero auto-warning**: When any pillar fires `spx_warning`, the hero card border flips amber/red, "MACRO ALERT" badge appears, and a footer warning explains why.
+
 ## Phase 3 — Backlog (P1)
 - [ ] **AI Clarity Score** — daily 0–100 score "is the market clear enough to trade".
 - [ ] **AI Trade Scanner** — detects setups (range break / pullback / divergence).

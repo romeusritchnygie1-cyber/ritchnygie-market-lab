@@ -267,7 +267,7 @@ def _vix_pillar() -> Dict[str, Any]:
         "commentary": commentary,
         "spx_warning": spx_warning,
     }
-    cache.set(cache_key, out, ttl=60)
+    cache.set(cache_key, out, ttl=30)
     return out
 
 
