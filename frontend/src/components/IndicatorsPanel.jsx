@@ -3,10 +3,10 @@ import { fetchIndicators } from "@/lib/api";
 import { Activity, TrendingUp, Gauge } from "lucide-react";
 
 const SYMBOLS = [
-    { sym: "SPX",    color: "card-blue",    text: "#60a5fa" },
-    { sym: "GOLD",   color: "card-amber",   text: "#fbbf24" },
-    { sym: "SILVER", color: "card-cyan",    text: "#22d3ee" },
-    { sym: "DXY",    color: "card-purple",  text: "#c084fc" },
+    { sym: "SPX",    color: "card-blue",   text: "#60a5fa" },
+    { sym: "SILVER", color: "card-cyan",   text: "#67e8f9" },
+    { sym: "GOLD",   color: "card-amber",  text: "#fbbf24" },
+    { sym: "DXY",    color: "card-purple", text: "#c084fc" },
 ];
 
 export default function IndicatorsPanel() {

@@ -99,6 +99,22 @@ async def news(category: str = "all", limit: int = 30):
     return {"items": items}
 
 
+@api_router.get("/news/spotlight/{symbol}")
+async def news_spotlight(symbol: str, limit: int = 12):
+    """Per-market news for the user's 3 traded markets (SPX / SILVER / GOLD)
+    plus any other supported symbol (e.g. AAPL, NVDA)."""
+    from services.market import get_news_for
+    sym = symbol.upper()
+    items = get_news_for(sym, limit=limit)
+    # For broad indices the symbol-level news can be sparse — augment with
+    # category-level macro/tech feeds for SPX.
+    if sym in ("SPX", "SPY") and len(items) < limit:
+        from services.news_service import get_combined_news
+        macro = [n for n in get_combined_news("macro", limit=20) if n["title"] not in {i["title"] for i in items}]
+        items += macro[: limit - len(items)]
+    return {"symbol": sym, "items": items[:limit]}
+
+
 @api_router.get("/london-session")
 async def london():
     return session_status()

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import TickerStrip from "@/components/TickerStrip";
-import HeroDual from "@/components/HeroDual";
+import HeroTriple from "@/components/HeroTriple";
 import Mag7Heatmap from "@/components/Mag7Heatmap";
 import RegimeCard from "@/components/RegimeCard";
 import EconomicCalendar from "@/components/EconomicCalendar";
 import NewsFeed from "@/components/NewsFeed";
+import SpotlightNews from "@/components/SpotlightNews";
 import IndicatorsPanel from "@/components/IndicatorsPanel";
 import LondonSession from "@/components/LondonSession";
 import MacroPanel from "@/components/MacroPanel";
@@ -13,8 +14,8 @@ import TradingViewWidget from "@/components/TradingViewWidget";
 
 const CHART_SYMBOLS = [
     { sym: "FOREXCOM:SPXUSD",  label: "S&P 500 CFD",  short: "SPX",    color: "#60a5fa" },
+    { sym: "OANDA:XAGUSD",     label: "Silver",        short: "SILVER", color: "#67e8f9" },
     { sym: "OANDA:XAUUSD",     label: "Gold",          short: "GOLD",   color: "#fbbf24" },
-    { sym: "OANDA:XAGUSD",     label: "Silver",        short: "SILVER", color: "#22d3ee" },
     { sym: "TVC:DXY",          label: "DXY",           short: "DXY",    color: "#c084fc" },
     { sym: "TVC:VIX",          label: "VIX",           short: "VIX",    color: "#f87171" },
     { sym: "TVC:US10Y",        label: "10Y Yield",     short: "TNX",    color: "#fb923c" },
@@ -62,8 +63,8 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* Dual Hero — SPX (navy) + Gold (amber) */}
-                <section className="mb-3"><HeroDual /></section>
+                {/* Triple Hero — SPX (navy) + Silver (cyan) + Gold (amber) */}
+                <section className="mb-3"><HeroTriple /></section>
 
                 {/* Regime + London */}
                 <section className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3">
@@ -128,6 +129,9 @@ export default function Dashboard() {
 
                 {/* Mag7 (multi-color) */}
                 <section className="mb-3"><Mag7Heatmap /></section>
+
+                {/* Spotlight news for the 3 traded markets */}
+                <section className="mb-3"><SpotlightNews /></section>
 
                 {/* Macro panel */}
                 <section className="mb-3"><MacroPanel /></section>
