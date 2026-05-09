@@ -64,16 +64,16 @@ export default function SpotlightNews() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {loading && items.length === 0
                     ? Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="h-20 bg-white/[0.03] rounded animate-pulse" />
+                        <div key={`sk-${i}`} className="h-20 bg-white/[0.03] rounded animate-pulse" />
                     ))
-                    : items.map((n, i) => (
+                    : items.map((n) => (
                         <a
-                            key={`${n.title}-${i}`}
+                            key={`${n.url}-${n.title}`}
                             href={n.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={`${tab.bg} rounded p-3 group hover:-translate-y-0.5 transition-transform`}
-                            data-testid={`spotlight-item-${i}`}
+                            data-testid={`spotlight-item-${n.title.slice(0, 20)}`}
                             style={{ borderLeft: `3px solid ${tab.color}` }}
                         >
                             <p className="text-sm text-white leading-snug group-hover:text-blue-300 font-body">

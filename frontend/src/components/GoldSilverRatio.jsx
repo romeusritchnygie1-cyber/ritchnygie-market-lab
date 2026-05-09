@@ -17,7 +17,9 @@ export default function GoldSilverRatio() {
             try {
                 const r = await fetchRatio();
                 if (mounted) setData(r);
-            } catch { /* ignore */ }
+            } catch (err) {
+                console.error("[GoldSilverRatio] fetch failed:", err);
+            }
         };
         load();
         const id = setInterval(load, 90000);

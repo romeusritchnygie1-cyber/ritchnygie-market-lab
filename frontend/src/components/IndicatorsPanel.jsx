@@ -17,7 +17,8 @@ export default function IndicatorsPanel() {
         const load = async () => {
             const out = {};
             for (const { sym } of SYMBOLS) {
-                try { out[sym] = await fetchIndicators(sym); } catch { /* ignore */ }
+                try { out[sym] = await fetchIndicators(sym); }
+                catch (err) { console.error(`[IndicatorsPanel] failed to load ${sym}:`, err); }
             }
             if (mounted) setData(out);
         };

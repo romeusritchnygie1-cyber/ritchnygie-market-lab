@@ -19,15 +19,16 @@ def session_status() -> Dict[str, Any]:
     in_london = LONDON_OPEN_UTC <= h < LONDON_CLOSE_UTC
     in_overlap = NY_OVERLAP_OPEN <= h < NY_OVERLAP_CLOSE
 
+    # Defaults — guarantees `phase`/`intensity` are always defined.
+    phase: str = "Off-Session"
+    intensity: str = "quiet"
+
     if in_overlap:
         phase = "London + NY Overlap"
         intensity = "peak"
     elif in_london:
         phase = "London Session"
         intensity = "active"
-    else:
-        phase = "Off-Session"
-        intensity = "quiet"
 
     # Time until next open / close
     if in_london:

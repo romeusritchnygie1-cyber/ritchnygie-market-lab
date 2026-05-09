@@ -42,8 +42,10 @@ export default function Lab() {
 
     useEffect(() => {
         (async () => {
-            try { setBehavior(await fetchBehaviorFiltered(filter.key)); } catch { /* ignore */ }
-            try { setProb(await fetchProbabilityFiltered(filter.key)); } catch { /* ignore */ }
+            try { setBehavior(await fetchBehaviorFiltered(filter.key)); }
+            catch (err) { console.error("[Lab] behavior fetch failed:", err); }
+            try { setProb(await fetchProbabilityFiltered(filter.key)); }
+            catch (err) { console.error("[Lab] probability fetch failed:", err); }
         })();
     }, [filter]);
 
@@ -244,8 +246,8 @@ function BreakdownTable({ title, rows }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {(rows || []).map((r, i) => (
-                        <tr key={i} className="border-b border-rtl-soft">
+                    {(rows || []).map((r) => (
+                        <tr key={`${r.key}-${r.trades}`} className="border-b border-rtl-soft">
                             <td className="px-3 py-1.5 text-white">{r.key}</td>
                             <td className="px-3 py-1.5 font-mono text-right txt-sec">{r.trades}</td>
                             <td className={`px-3 py-1.5 font-mono text-right ${r.winrate >= 50 ? "txt-up" : "txt-down"}`}>{r.winrate}%</td>
@@ -274,15 +276,18 @@ function ProbabilityTable({ title, rows, cols }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {(rows || []).slice(0, 12).map((r, i) => (
-                            <tr key={i} className="border-b border-rtl-soft">
+                        {(rows || []).slice(0, 12).map((r, i) => {
+                            const stableKey = cols.map((c) => r[c]).join("|") + `:${i}`;
+                            return (
+                            <tr key={stableKey} className="border-b border-rtl-soft">
                                 {cols.map((c) => <td key={c} className="px-3 py-1.5 text-white">{r[c]}</td>)}
                                 <td className="px-3 py-1.5 font-mono text-right txt-sec">{r.trades}</td>
                                 <td className={`px-3 py-1.5 font-mono text-right ${r.winrate >= 50 ? "txt-up" : "txt-down"}`}>{r.winrate}%</td>
                                 <td className={`px-3 py-1.5 font-mono text-right ${r.avg_r >= 0 ? "txt-up" : "txt-down"}`}>{r.avg_r}R</td>
                                 <td className="px-3 py-1.5 font-mono text-right text-white">{r.edge_score}</td>
                             </tr>
-                        ))}
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>

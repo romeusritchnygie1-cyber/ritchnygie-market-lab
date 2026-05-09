@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 
 /**
  * TradingViewWidget — embeds TradingView's official advanced chart widget.
- * This is the same chart engine as tradingview.com — full candles, drawing tools,
- * indicators and timeframes — all free.
+ * Same chart engine as tradingview.com — full candles, drawing tools,
+ * indicators and timeframes — all free. Uses safe DOM APIs (no innerHTML).
  */
 export default function TradingViewWidget({
     symbol = "FOREXCOM:SPXUSD",
@@ -15,7 +15,9 @@ export default function TradingViewWidget({
     const containerRef = useRef(null);
 
     useEffect(() => {
-        if (!containerRef.current) return;
+        const container = containerRef.current;
+        if (!container) return;
+
         // Detect theme from CSS var to keep TV widget in sync
         const themeName = document.documentElement.getAttribute("data-rtl-theme") || "navy";
         const tvTheme = themeName === "light" ? "light" : "dark";
@@ -23,16 +25,27 @@ export default function TradingViewWidget({
             getComputedStyle(document.documentElement).getPropertyValue("--rtl-bg-card").trim() ||
             "#0a0a0a";
 
-        // Clear any previous widget
-        containerRef.current.innerHTML = `<div id="tv-${instanceKey}" style="height:100%;width:100%;"></div>`;
+        // Sanitize instanceKey aggressively — only allow safe DOM-id chars
+        const safeKey = String(instanceKey || "default").replace(/[^a-zA-Z0-9_-]/g, "");
 
+        // Clear container using safe DOM (no innerHTML)
+        while (container.firstChild) container.removeChild(container.firstChild);
+
+        // Create the inner mount node via createElement
+        const mount = document.createElement("div");
+        mount.id = `tv-${safeKey}`;
+        mount.style.height = "100%";
+        mount.style.width = "100%";
+        container.appendChild(mount);
+
+        // Inject the TradingView script
         const script = document.createElement("script");
         script.src = "https://s3.tradingview.com/tv.js";
         script.async = true;
         script.onload = () => {
-            if (window.TradingView && document.getElementById(`tv-${instanceKey}`)) {
+            if (window.TradingView && document.getElementById(mount.id)) {
                 new window.TradingView.widget({
-                    container_id: `tv-${instanceKey}`,
+                    container_id: mount.id,
                     symbol,
                     interval,
                     autosize: true,
@@ -55,10 +68,13 @@ export default function TradingViewWidget({
                 });
             }
         };
-        containerRef.current.appendChild(script);
+        container.appendChild(script);
 
+        // Cleanup
         return () => {
-            if (containerRef.current) containerRef.current.innerHTML = "";
+            if (container) {
+                while (container.firstChild) container.removeChild(container.firstChild);
+            }
         };
     }, [symbol, interval, instanceKey, studies]);
 

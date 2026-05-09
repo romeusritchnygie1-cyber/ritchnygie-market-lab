@@ -41,19 +41,19 @@ export default function NewsFeed({ limit = 12, showFilters = true }) {
             {loading && !data ? (
                 <div className="space-y-3">
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className="h-12 bg-white/[0.03] rounded animate-pulse" />
+                        <div key={`sk-${i}`} className="h-12 bg-white/[0.03] rounded animate-pulse" />
                     ))}
                 </div>
             ) : (
                 <div className="divide-y divide-white/[0.06]">
-                    {(data?.items || []).slice(0, limit).map((n, i) => (
+                    {(data?.items || []).slice(0, limit).map((n) => (
                         <a
-                            key={`${n.title}-${i}`}
+                            key={`${n.url}-${n.title}`}
                             href={n.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block py-3 group"
-                            data-testid={`news-item-${i}`}
+                            data-testid={`news-item-${(n.title || "").slice(0, 24)}`}
                         >
                             <div className="flex items-start gap-3">
                                 <span className="font-mono text-[10px] tracking-wider uppercase px-1.5 py-0.5 border border-white/[0.12] txt-sec mt-0.5 shrink-0">

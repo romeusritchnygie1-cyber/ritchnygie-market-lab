@@ -15,8 +15,8 @@ export default function Journal() {
             setLoading(true);
             const r = await fetchTrades(500);
             setTrades(r.trades || []);
-        } catch (e) {
-            /* ignore */
+        } catch (err) {
+            console.error("[Journal] failed to load trades:", err);
         } finally {
             setLoading(false);
         }

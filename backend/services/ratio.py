@@ -14,6 +14,16 @@ def gold_silver_ratio() -> Dict[str, Any]:
 
     current = gold_q["price"] / silver_q["price"]
 
+    # Defensive defaults — guarantees these are always defined regardless of which
+    # branch fires below. Static analyzers can't always prove it; this makes intent explicit.
+    signal: str = "Neutral"
+    signal_color: str = "neutral"
+    signal_strength: str = "balanced"
+    commentary: str = (
+        "Ratio in mid-range — no strong precious-metals bias. "
+        "Trade direction with macro flow, sized normally."
+    )
+
     # 1y daily history
     g_hist = get_history("GOLD", period="1y", interval="1d")
     s_hist = get_history("SILVER", period="1y", interval="1d")
