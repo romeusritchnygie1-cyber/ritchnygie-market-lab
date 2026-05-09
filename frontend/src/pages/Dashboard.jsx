@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import TickerStrip from "@/components/TickerStrip";
 import HeroTriple from "@/components/HeroTriple";
 import GoldSilverRatio from "@/components/GoldSilverRatio";
+import MacroPillars from "@/components/MacroPillars";
+import ValuationEngine from "@/components/ValuationEngine";
 import MarketEngine from "@/components/MarketEngine";
 import Mag7Heatmap from "@/components/Mag7Heatmap";
 import RegimeCard from "@/components/RegimeCard";
@@ -67,6 +69,12 @@ export default function Dashboard() {
 
                 {/* Triple Hero — SPX (navy) + Silver (cyan) + Gold (amber) */}
                 <section className="mb-3"><HeroTriple /></section>
+
+                {/* Macro Pillars — CPI / DXY / VIX institutional gauges */}
+                <section className="mb-3"><MacroPillars /></section>
+
+                {/* Valuation Engine — Trailing vs Forward expectations heatmap */}
+                <section className="mb-3"><ValuationEngine /></section>
 
                 {/* Gold/Silver Ratio — precious-metals macro signal */}
                 <section className="mb-3"><GoldSilverRatio /></section>

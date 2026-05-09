@@ -17,6 +17,8 @@ from services.fred_service import get_macro_panel, fetch_series
 from services.ohlc import get_ohlc
 from services.ratio import gold_silver_ratio
 from services.market_engine import analyze as analyze_market
+from services.valuation import get_valuation
+from services.pillars import get_pillars
 from services.journal import Trade, TradeCreate, TradeUpdate, trade_to_doc, doc_to_trade
 from services.analytics import behavior_stats, probability_engine
 from services.backtest import run_backtest
@@ -154,6 +156,21 @@ async def market_engine(symbol: str):
 async def market_engine_multi(symbols: str = "SPX,SILVER,GOLD"):
     syms = [s.strip().upper() for s in symbols.split(",") if s.strip()]
     return {sym: analyze_market(sym) for sym in syms}
+
+
+@api_router.get("/macro-pillars")
+async def macro_pillars():
+    """3 institutional gauges: CPI Watchdog, DXY Liquidity Meter, VIX Fear Index."""
+    return await get_pillars()
+
+
+@api_router.get("/valuation")
+async def valuation():
+    """Trailing/Forward P/E heatmap for SPX + commodity valuation pressure for Gold/Silver."""
+    pillars = await get_pillars()
+    cpi_yoy = pillars.get("cpi_yoy") or 3.0
+    return get_valuation(cpi_yoy=cpi_yoy)
+
 
 
 @api_router.get("/symbols")
