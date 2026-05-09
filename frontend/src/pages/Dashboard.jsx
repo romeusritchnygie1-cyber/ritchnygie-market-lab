@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import TickerStrip from "@/components/TickerStrip";
 import HeroTriple from "@/components/HeroTriple";
+import GoldSilverRatio from "@/components/GoldSilverRatio";
 import Mag7Heatmap from "@/components/Mag7Heatmap";
 import RegimeCard from "@/components/RegimeCard";
 import EconomicCalendar from "@/components/EconomicCalendar";
@@ -65,6 +66,9 @@ export default function Dashboard() {
 
                 {/* Triple Hero — SPX (navy) + Silver (cyan) + Gold (amber) */}
                 <section className="mb-3"><HeroTriple /></section>
+
+                {/* Gold/Silver Ratio — precious-metals macro signal */}
+                <section className="mb-3"><GoldSilverRatio /></section>
 
                 {/* Regime + London */}
                 <section className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3">

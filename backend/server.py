@@ -15,6 +15,7 @@ from services.news_service import get_combined_news, get_newsapi_headlines
 from services.london_session import session_status
 from services.fred_service import get_macro_panel, fetch_series
 from services.ohlc import get_ohlc
+from services.ratio import gold_silver_ratio
 from services.journal import Trade, TradeCreate, TradeUpdate, trade_to_doc, doc_to_trade
 from services.analytics import behavior_stats, probability_engine
 from services.backtest import run_backtest
@@ -136,6 +137,11 @@ async def macro_series(series_id: str):
 @api_router.get("/ohlc/{symbol}")
 async def ohlc(symbol: str, period: str = "3mo", interval: str = "1d"):
     return get_ohlc(symbol, period=period, interval=interval)
+
+
+@api_router.get("/gold-silver-ratio")
+async def gold_silver():
+    return gold_silver_ratio()
 
 
 @api_router.get("/symbols")
