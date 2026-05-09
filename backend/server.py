@@ -16,6 +16,7 @@ from services.london_session import session_status
 from services.fred_service import get_macro_panel, fetch_series
 from services.ohlc import get_ohlc
 from services.ratio import gold_silver_ratio
+from services.market_engine import analyze as analyze_market
 from services.journal import Trade, TradeCreate, TradeUpdate, trade_to_doc, doc_to_trade
 from services.analytics import behavior_stats, probability_engine
 from services.backtest import run_backtest
@@ -142,6 +143,17 @@ async def ohlc(symbol: str, period: str = "3mo", interval: str = "1d"):
 @api_router.get("/gold-silver-ratio")
 async def gold_silver():
     return gold_silver_ratio()
+
+
+@api_router.get("/market-engine/{symbol}")
+async def market_engine(symbol: str):
+    return analyze_market(symbol)
+
+
+@api_router.get("/market-engine")
+async def market_engine_multi(symbols: str = "SPX,SILVER,GOLD"):
+    syms = [s.strip().upper() for s in symbols.split(",") if s.strip()]
+    return {sym: analyze_market(sym) for sym in syms}
 
 
 @api_router.get("/symbols")

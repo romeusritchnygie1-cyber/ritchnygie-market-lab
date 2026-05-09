@@ -7,9 +7,9 @@ const fetchSilver = () => api.get("/quote/SILVER").then((r) => r.data);
 const fetchGold = () => api.get("/quote/GOLD").then((r) => r.data);
 
 const CARDS = [
-    { key: "primary", title: "S&P 500 CFD", broker: "FundedNext", cardClass: "card-navy", priceColor: "#93c5fd", accent: "PRIMARY", fetcher: fetchHero,   ttl: 15000 },
-    { key: "silver",  title: "Silver (XAGUSD)", broker: "OANDA",   cardClass: "card-cyan",  priceColor: "#67e8f9", accent: "PRECIOUS", fetcher: fetchSilver, ttl: 30000 },
-    { key: "gold",    title: "Gold (XAUUSD)",   broker: "OANDA",   cardClass: "card-amber", priceColor: "#fbbf24", accent: "COMMODITY", fetcher: fetchGold,   ttl: 30000 },
+    { key: "primary", title: "S&P 500 CFD", broker: "FundedNext · CFD", cardClass: "card-navy", priceColor: "#93c5fd", accent: "PRIMARY", fetcher: fetchHero,   ttl: 15000 },
+    { key: "silver",  title: "Silver (XAGUSD)", broker: "FTMO · OANDA",  cardClass: "card-cyan",  priceColor: "#67e8f9", accent: "PRECIOUS", fetcher: fetchSilver, ttl: 30000 },
+    { key: "gold",    title: "Gold (XAUUSD)",   broker: "FTMO · OANDA",  cardClass: "card-amber", priceColor: "#fbbf24", accent: "COMMODITY", fetcher: fetchGold,   ttl: 30000 },
 ];
 
 export default function HeroTriple() {

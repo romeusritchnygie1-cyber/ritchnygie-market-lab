@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import TickerStrip from "@/components/TickerStrip";
 import HeroTriple from "@/components/HeroTriple";
 import GoldSilverRatio from "@/components/GoldSilverRatio";
+import MarketEngine from "@/components/MarketEngine";
 import Mag7Heatmap from "@/components/Mag7Heatmap";
 import RegimeCard from "@/components/RegimeCard";
 import EconomicCalendar from "@/components/EconomicCalendar";
@@ -14,21 +15,21 @@ import MacroPanel from "@/components/MacroPanel";
 import TradingViewWidget from "@/components/TradingViewWidget";
 
 const CHART_SYMBOLS = [
-    { sym: "FOREXCOM:SPXUSD",  label: "S&P 500 CFD",  short: "SPX",    color: "#60a5fa" },
-    { sym: "OANDA:XAGUSD",     label: "Silver",        short: "SILVER", color: "#67e8f9" },
-    { sym: "OANDA:XAUUSD",     label: "Gold",          short: "GOLD",   color: "#fbbf24" },
-    { sym: "TVC:DXY",          label: "DXY",           short: "DXY",    color: "#c084fc" },
-    { sym: "TVC:VIX",          label: "VIX",           short: "VIX",    color: "#f87171" },
-    { sym: "TVC:US10Y",        label: "10Y Yield",     short: "TNX",    color: "#fb923c" },
-    { sym: "FOREXCOM:US30",    label: "Dow Jones",     short: "DJI",    color: "#34d399" },
-    { sym: "NASDAQ:NVDA",      label: "Nvidia",        short: "NVDA",   color: "#fb923c" },
-    { sym: "NASDAQ:AAPL",      label: "Apple",         short: "AAPL",   color: "#60a5fa" },
-    { sym: "NASDAQ:MSFT",      label: "Microsoft",     short: "MSFT",   color: "#22d3ee" },
-    { sym: "NASDAQ:TSLA",      label: "Tesla",         short: "TSLA",   color: "#f87171" },
-    { sym: "NASDAQ:AMD",       label: "AMD",           short: "AMD",    color: "#ec4899" },
-    { sym: "NASDAQ:ASML",      label: "ASML",          short: "ASML",   color: "#a3e635" },
-    { sym: "NYSE:GS",          label: "Goldman Sachs", short: "GS",     color: "#fde047" },
-    { sym: "NYSE:MS",          label: "Morgan Stanley", short: "MS",    color: "#60a5fa" },
+    { sym: "FOREXCOM:SPXUSD",  label: "S&P 500 CFD · FundedNext",  short: "SPX",    color: "#60a5fa" },
+    { sym: "OANDA:XAGUSD",     label: "Silver · FTMO/OANDA",       short: "SILVER", color: "#67e8f9" },
+    { sym: "OANDA:XAUUSD",     label: "Gold · FTMO/OANDA",          short: "GOLD",   color: "#fbbf24" },
+    { sym: "TVC:DXY",          label: "DXY",                         short: "DXY",    color: "#c084fc" },
+    { sym: "TVC:VIX",          label: "VIX",                         short: "VIX",    color: "#f87171" },
+    { sym: "TVC:US10Y",        label: "10Y Yield",                   short: "TNX",    color: "#fb923c" },
+    { sym: "FOREXCOM:US30",    label: "Dow Jones",                   short: "DJI",    color: "#34d399" },
+    { sym: "NASDAQ:NVDA",      label: "Nvidia",                      short: "NVDA",   color: "#fb923c" },
+    { sym: "NASDAQ:AAPL",      label: "Apple",                       short: "AAPL",   color: "#60a5fa" },
+    { sym: "NASDAQ:MSFT",      label: "Microsoft",                   short: "MSFT",   color: "#22d3ee" },
+    { sym: "NASDAQ:TSLA",      label: "Tesla",                       short: "TSLA",   color: "#f87171" },
+    { sym: "NASDAQ:AMD",       label: "AMD",                         short: "AMD",    color: "#ec4899" },
+    { sym: "NASDAQ:ASML",      label: "ASML",                        short: "ASML",   color: "#a3e635" },
+    { sym: "NYSE:GS",          label: "Goldman Sachs",               short: "GS",     color: "#fde047" },
+    { sym: "NYSE:MS",          label: "Morgan Stanley",              short: "MS",    color: "#60a5fa" },
 ];
 
 const TIMEFRAMES = [
@@ -69,6 +70,9 @@ export default function Dashboard() {
 
                 {/* Gold/Silver Ratio — precious-metals macro signal */}
                 <section className="mb-3"><GoldSilverRatio /></section>
+
+                {/* Dynamic Market Analysis Engine — SPX / Silver / Gold */}
+                <section className="mb-3"><MarketEngine /></section>
 
                 {/* Regime + London */}
                 <section className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3">
