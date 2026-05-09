@@ -12,7 +12,8 @@ import EconomicCalendar from "@/components/EconomicCalendar";
 import NewsFeed from "@/components/NewsFeed";
 import SpotlightNews from "@/components/SpotlightNews";
 import IndicatorsPanel from "@/components/IndicatorsPanel";
-import LondonSession from "@/components/LondonSession";
+import SessionMatrix from "@/components/SessionMatrix";
+import GeoAlerts from "@/components/GeoAlerts";
 import MacroPanel from "@/components/MacroPanel";
 import TradingViewWidget from "@/components/TradingViewWidget";
 
@@ -82,10 +83,15 @@ export default function Dashboard() {
                 {/* Dynamic Market Analysis Engine — SPX / Silver / Gold */}
                 <section className="mb-3"><MarketEngine /></section>
 
-                {/* Regime + London */}
+                {/* Trading Sessions per asset (SPX NY · Silver London · Gold both) */}
+                <section className="mb-3"><SessionMatrix /></section>
+
+                {/* Geopolitical Risk Radar — high-impact news scanner */}
+                <section className="mb-3"><GeoAlerts /></section>
+
+                {/* Regime card */}
                 <section className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3">
-                    <div className="lg:col-span-8"><RegimeCard /></div>
-                    <div className="lg:col-span-4"><LondonSession /></div>
+                    <div className="lg:col-span-12"><RegimeCard /></div>
                 </section>
 
                 {/* SINGLE TradingView Chart — switches between SPX, Gold, Silver, DXY, etc. */}

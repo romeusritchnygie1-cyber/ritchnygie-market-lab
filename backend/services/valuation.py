@@ -20,6 +20,11 @@ from .market import _quote_from_history
 # We weight trailing & forward P/Es by market cap to approximate the index P/E.
 SPX_TOP10 = ["AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "BRK-B", "LLY", "JPM"]
 
+# Gold-mining majors — proxy for Gold P/E (real earnings exist here)
+GOLD_MINERS = ["NEM", "GOLD", "AEM", "FNV", "WPM"]
+# Silver-mining majors — proxy for Silver P/E
+SILVER_MINERS = ["PAAS", "AG", "FSM", "HL", "CDE"]
+
 
 def _info(symbol: str) -> Dict[str, Any]:
     cache_key = f"info:{symbol}"
@@ -68,6 +73,36 @@ def _spx_pe() -> Dict[str, Any]:
         "forward_pe": round(forward, 2) if forward else None,
         "components": components,
         "method": "market-cap weighted top-10 SPX components (earnings-yield aggregation)",
+    }
+
+
+def _miner_pe(symbols: List[str]) -> Dict[str, Any]:
+    """Market-cap weighted trailing & forward P/E across a basket of mining stocks.
+    Same earnings-yield aggregation as SPX — robust to outliers."""
+    rows: List[Tuple[str, float, float, float]] = []
+    for sym in symbols:
+        info = _info(sym)
+        mc = info.get("marketCap")
+        tpe = info.get("trailingPE")
+        fpe = info.get("forwardPE")
+        if mc and tpe and fpe and tpe > 0 and fpe > 0:
+            rows.append((sym, float(mc), float(tpe), float(fpe)))
+    if not rows:
+        return {"trailing_pe": None, "forward_pe": None, "components": []}
+    total_mc = sum(r[1] for r in rows)
+    trailing_ey = sum((1.0 / r[2]) * r[1] for r in rows) / total_mc
+    forward_ey = sum((1.0 / r[3]) * r[1] for r in rows) / total_mc
+    trailing = 1.0 / trailing_ey if trailing_ey > 0 else None
+    forward = 1.0 / forward_ey if forward_ey > 0 else None
+    components = [
+        {"symbol": s, "weight_pct": round(mc / total_mc * 100, 2),
+         "trailing_pe": round(t, 2), "forward_pe": round(f, 2)}
+        for s, mc, t, f in rows
+    ]
+    return {
+        "trailing_pe": round(trailing, 2) if trailing else None,
+        "forward_pe": round(forward, 2) if forward else None,
+        "components": components,
     }
 
 
@@ -257,19 +292,29 @@ def get_valuation(cpi_yoy: float = 3.0) -> Dict[str, Any]:
     }
 
     gold_v = _gold_valuation(cpi_yoy)
+    gold_miners = _miner_pe(GOLD_MINERS)
     gold_v.update({
         "symbol": "GOLD",
         "label": "Gold",
         "broker": "FTMO · OANDA",
         "metric_type": "Real Yield Pressure",
+        "miner_trailing_pe": gold_miners.get("trailing_pe"),
+        "miner_forward_pe": gold_miners.get("forward_pe"),
+        "miner_components": gold_miners.get("components", []),
+        "miner_basket_label": "Top-5 Gold Miners (NEM·GOLD·AEM·FNV·WPM)",
     })
 
     silver_v = _silver_valuation()
+    silver_miners = _miner_pe(SILVER_MINERS)
     silver_v.update({
         "symbol": "SILVER",
         "label": "Silver",
         "broker": "FTMO · OANDA",
         "metric_type": "Relative-Value Pressure",
+        "miner_trailing_pe": silver_miners.get("trailing_pe"),
+        "miner_forward_pe": silver_miners.get("forward_pe"),
+        "miner_components": silver_miners.get("components", []),
+        "miner_basket_label": "Top-5 Silver Miners (PAAS·AG·FSM·HL·CDE)",
     })
 
     out = {"spx": spx, "gold": gold_v, "silver": silver_v}

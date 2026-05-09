@@ -37,6 +37,11 @@ function ValuationTile({ data, accent }) {
     const delta = trailing && forward ? forward - trailing : 0;
     const deltaPct = trailing ? (delta / trailing) * 100 : 0;
 
+    // Miner P/E (only present for Gold & Silver — real earnings via mining basket)
+    const minerTrailing = data.miner_trailing_pe;
+    const minerForward = data.miner_forward_pe;
+    const hasMiner = minerTrailing != null && minerForward != null;
+
     return (
         <div className={`${sig.card} rounded p-5 transition-all`} data-testid={`valuation-tile-${data.symbol}`}>
             {/* header */}
@@ -81,6 +86,35 @@ function ValuationTile({ data, accent }) {
                     <span style={{ color: sig.text }} className="font-medium">
                         {delta >= 0 ? "+" : ""}{delta.toFixed(2)} ({deltaPct >= 0 ? "+" : ""}{deltaPct.toFixed(1)}%)
                     </span>
+                </div>
+            )}
+
+            {/* Miner basket P/E (Gold & Silver) */}
+            {hasMiner && (
+                <div className="mb-3 pt-3 border-t border-white/10" data-testid={`miner-pe-${data.symbol}`}>
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="rtl-eyebrow">Miner Basket P/E</div>
+                        <div className="text-[9px] tracking-[0.20em] uppercase font-headings txt-mute">
+                            {data.miner_basket_label}
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <div className="text-[10px] tracking-[0.18em] uppercase font-headings txt-mute mb-0.5">Trailing P/E</div>
+                            <div className="font-mono text-lg" style={{ color: accent.color }}>{minerTrailing.toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <div className="text-[10px] tracking-[0.18em] uppercase font-headings txt-mute mb-0.5">Forward P/E</div>
+                            <div className="font-mono text-lg" style={{ color: minerForward < minerTrailing ? "#34d399" : "#f87171" }}>
+                                {minerForward.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-1.5 text-[10px] font-mono" style={{ color: minerForward < minerTrailing ? "#34d399" : "#f87171" }}>
+                        {minerForward < minerTrailing
+                            ? `↘ Forward ${((minerTrailing - minerForward) / minerTrailing * 100).toFixed(1)}% below trailing — earnings expansion expected.`
+                            : `↗ Forward ${((minerForward - minerTrailing) / minerTrailing * 100).toFixed(1)}% above trailing — earnings contraction expected.`}
+                    </div>
                 </div>
             )}
 

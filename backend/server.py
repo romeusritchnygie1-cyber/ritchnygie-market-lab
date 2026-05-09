@@ -19,6 +19,8 @@ from services.ratio import gold_silver_ratio
 from services.market_engine import analyze as analyze_market
 from services.valuation import get_valuation
 from services.pillars import get_pillars
+from services.session_matrix import get_session_matrix
+from services.geopolitical import get_geopolitical_alerts
 from services.journal import Trade, TradeCreate, TradeUpdate, trade_to_doc, doc_to_trade
 from services.analytics import behavior_stats, probability_engine
 from services.backtest import run_backtest
@@ -170,6 +172,18 @@ async def valuation():
     pillars = await get_pillars()
     cpi_yoy = pillars.get("cpi_yoy") or 3.0
     return get_valuation(cpi_yoy=cpi_yoy)
+
+
+@api_router.get("/sessions")
+async def sessions():
+    """Per-asset trading session windows: SPX (NY 11–15:45 ET), Silver (London), Gold (both)."""
+    return get_session_matrix()
+
+
+@api_router.get("/geopolitical-alerts")
+async def geopolitical_alerts(limit: int = 12, severity: str = "medium"):
+    """Filtered & ranked geopolitical news across the user's traded universe."""
+    return get_geopolitical_alerts(limit=limit, min_severity=severity)
 
 
 
